@@ -64,6 +64,7 @@ module.exports = {
   		fontFamily: {
   			heading: ['var(--font-heading)'],
   			body: ['var(--font-body)'],
+  			serif: ['var(--font-serif)'],
   			display: ['var(--font-display)'],
   			mono: ['var(--font-mono)']
   		},

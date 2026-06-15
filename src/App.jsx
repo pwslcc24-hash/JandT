@@ -1,66 +1,51 @@
-import { Toaster } from "@/components/ui/toaster"
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import PageNotFound from './lib/PageNotFound';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import ScrollToTop from './components/ScrollToTop';
-import AppLayout from './components/layout/AppLayout';
-import Home from './pages/Home';
-import Chat from './pages/Chat';
-import Models from './pages/Models';
+import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
+import { EditorProvider } from "@/cms/context/EditorContext";
+import EditorShell from "@/components/editor/EditorShell";
+import WeddingLanding from "@/pages/WeddingLanding";
+import WeddingSection from "@/pages/WeddingSection";
+import WeddingGallery from "@/pages/WeddingGallery";
+import CmsLoginPage from "@/pages/admin/CmsLoginPage";
+import AdminLayout from "@/pages/admin/AdminLayout";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminPages from "@/pages/admin/AdminPages";
+import AdminMedia from "@/pages/admin/AdminMedia";
+import AdminContent from "@/pages/admin/AdminContent";
+import AdminUsers from "@/pages/admin/AdminUsers";
+import AdminSettings from "@/pages/admin/AdminSettings";
+import AdminAnalytics from "@/pages/admin/AdminAnalytics";
 
-const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
-
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
-  }
-
-  // Render the main app
+function PublicLayout() {
   return (
-    <Routes>
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/models" element={<Models />} />
-      </Route>
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+    <EditorShell>
+      <Outlet />
+    </EditorShell>
   );
-};
-
-
-function App() {
-
-  return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <ScrollToTop />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
-  )
 }
 
-export default App
+function App() {
+  return (
+    <BrowserRouter>
+      <EditorProvider>
+        <Routes>
+          <Route path="/admin/login" element={<CmsLoginPage />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="pages" element={<AdminPages />} />
+            <Route path="media" element={<AdminMedia />} />
+            <Route path="content" element={<AdminContent />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="settings" element={<AdminSettings />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
+          </Route>
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<WeddingLanding />} />
+            <Route path="/photos/:album" element={<WeddingGallery />} />
+            <Route path="/:slug" element={<WeddingSection />} />
+          </Route>
+        </Routes>
+      </EditorProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
