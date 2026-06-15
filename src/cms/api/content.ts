@@ -2,6 +2,12 @@ import { getSupabase, isSupabaseConfigured, STORAGE_BUCKET } from "../supabase/c
 import type { SiteDocument, MediaAsset } from "../types";
 import { createDefaultSiteDocument } from "../seed/defaultSite";
 import { loadPublishedSiteDocument } from "./publish";
+import {
+  documentHasInlineMedia,
+  externalizeInlineMedia,
+  uploadBlobToBase44,
+} from "./base44Media";
+import { isBase44PublishAvailable } from "./publish";
 import { cloneSiteDocument, touchSiteDocument } from "../utils/immutable";
 import imageCompression from "browser-image-compression";
 
@@ -154,13 +160,34 @@ export function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument):
 }
 
 export async function saveLocalDraft(doc: SiteDocument): Promise<void> {
-  const snapshot = touchSiteDocument(doc);
+  let snapshot = touchSiteDocument(doc);
+  try {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
+    return;
+  } catch {
+    if (!isBase44PublishAvailable() || !documentHasInlineMedia(snapshot)) {
+      throw new Error(
+        "Draft is too large to save locally. Use smaller images/videos or click Save Live."
+      );
+    }
+  }
+
+  snapshot = touchSiteDocument(await externalizeInlineMedia(snapshot));
   localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
 }
 
 export async function publishSiteDocument(doc: SiteDocument): Promise<SiteDocument> {
-  const snapshot = touchSiteDocument(doc);
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
+  let working = cloneSiteDocument(doc);
+  if (documentHasInlineMedia(working)) {
+    working = await externalizeInlineMedia(working);
+  }
+
+  const snapshot = touchSiteDocument(working);
+  try {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
+  } catch {
+    // Local draft may exceed browser quota; live publish still proceeds.
+  }
 
   const { publishSiteToBase44 } = await import("./publish");
   await publishSiteToBase44(snapshot);
@@ -269,6 +296,19 @@ export async function uploadMedia(
     });
 
     return asset;
+  }
+
+  if (isBase44PublishAvailable()) {
+    const mimeType = file.type || uploadBlob.type || "application/octet-stream";
+    const publicUrl = await uploadBlobToBase44(uploadBlob, fileName, mimeType);
+    return {
+      id: crypto.randomUUID(),
+      publicUrl,
+      storagePath,
+      fileName: file.name,
+      altText: "",
+      sizeBytes: uploadBlob.size,
+    };
   }
 
   const dataUrl = await blobToDataUrl(uploadBlob);

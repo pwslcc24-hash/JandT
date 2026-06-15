@@ -63,6 +63,11 @@ export async function publishSiteToBase44(doc: SiteDocument): Promise<void> {
     await base44.entities.SiteContent.create(payload);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
+    if (/quota|too large|payload|limit/i.test(message)) {
+      throw new Error(
+        "Save failed — site content is too large. Try smaller photos/videos, then Save Live again."
+      );
+    }
     if (message.includes("not found") || message.includes("SiteContent")) {
       throw new Error(
         "Live save is not ready yet. Push to GitHub and Publish on Base44.com to register the SiteContent entity, then try again."
