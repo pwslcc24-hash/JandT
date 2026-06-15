@@ -14,8 +14,20 @@ export interface PhotoAlbum {
 }
 
 export function mediaKindFromFile(file: File): MediaKind {
-  return file.type.startsWith("video/") ? "video" : "image";
+  if (file.type.startsWith("video/")) return "video";
+  if (/\.(mp4|mov|webm|m4v|avi|mkv)$/i.test(file.name)) return "video";
+  return "image";
 }
+
+export function isMediaFile(file: File): boolean {
+  return (
+    file.type.startsWith("image/") ||
+    file.type.startsWith("video/") ||
+    /\.(mp4|mov|webm|m4v|avi|mkv|jpe?g|png|gif|webp|heic)$/i.test(file.name)
+  );
+}
+
+export const MEDIA_ACCEPT = "image/*,video/*,.mp4,.mov,.webm,.m4v";
 
 export function normalizeMediaItem(raw: Partial<MediaItem> | string): MediaItem {
   if (typeof raw === "string") {

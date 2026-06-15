@@ -52,8 +52,6 @@
 .hero-media-wrap { position: absolute; inset: 0; }
 .hero-media-wrap .video-bg-media, .hero-media-wrap img { width: 100%; height: 100%; object-fit: cover; }
 .cms-image-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 13px; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
-.cms-editable-media--editable:hover .cms-media-overlay,
-.cms-editable-image:hover .cms-image-overlay { opacity: 1; }
 .cms-editable-image:hover .cms-image-overlay, .cms-editable-image.cms-selected .cms-image-overlay { opacity: 1; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
 

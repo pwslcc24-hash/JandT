@@ -185,7 +185,7 @@ export async function uploadMedia(
   file: File,
   clientId: string
 ): Promise<MediaAsset> {
-  const isVideo = file.type.startsWith("video/");
+  const isVideo = file.type.startsWith("video/") || /\.(mp4|mov|webm|m4v|avi|mkv)$/i.test(file.name);
   const uploadBlob = isVideo
     ? file
     : await imageCompression(file, {
@@ -193,6 +193,10 @@ export async function uploadMedia(
         maxWidthOrHeight: 2400,
         useWebWorker: true,
       });
+
+  if (!isSupabaseConfigured && isVideo && uploadBlob.size > 15 * 1024 * 1024) {
+    throw new Error("Video is too large for local save (max 15MB). Use a shorter clip or compress it.");
+  }
 
   const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
   const storagePath = `${CLIENT_SLUG}/${fileName}`;

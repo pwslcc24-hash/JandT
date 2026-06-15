@@ -8,9 +8,12 @@ import EditableText from "@/components/editor/EditableText";
 import EditableMedia from "@/components/editor/EditableMedia";
 import { EditableSectionList } from "@/components/editor/EditableSection";
 import { useSiteContent } from "@/cms/hooks/useSiteContent";
+import { useEditor } from "@/cms/context/EditorContext";
+import { cn } from "@/lib/utils";
 
 export default function WeddingLanding() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { editMode, isAdmin } = useEditor();
   const { couple, date, videoUrl, nav, banner, exploreLabel, sectionOrder, getSectionKey } =
     useSiteContent();
   const days = useCountdown(date.iso);
@@ -29,7 +32,7 @@ export default function WeddingLanding() {
   };
 
   const renderHero = () => (
-    <div className="hero">
+    <div className={cn("hero", editMode && isAdmin && "hero--editing")}>
       <EditableMedia
         pageSlug="home"
         sectionKey="hero"
