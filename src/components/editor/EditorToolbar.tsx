@@ -109,10 +109,10 @@ export default function EditorToolbar() {
 
       <span className="editor-save-status">
         {publishStatus === "publishing" && "Publishing…"}
-        {publishStatus === "published" && "Live!"}
+        {publishStatus === "published" && "Saved live!"}
         {publishStatus === "error" && (publishError || "Publish failed")}
         {publishStatus === "idle" && saveStatus === "saving" && "Draft saving…"}
-        {publishStatus === "idle" && saveStatus === "saved" && "Draft saved"}
+        {publishStatus === "idle" && saveStatus === "saved" && "Draft saved locally"}
         {publishStatus === "idle" && saveStatus === "error" && "Draft save failed"}
       </span>
 

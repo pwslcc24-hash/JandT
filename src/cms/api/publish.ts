@@ -3,7 +3,7 @@ import { appParams } from "@/lib/app-params";
 import type { SiteDocument } from "../types";
 import { createDefaultSiteDocument } from "../seed/defaultSite";
 import { mergeSiteDocument } from "./content";
-import { cloneSiteDocument } from "../utils/immutable";
+import { cloneSiteDocument, touchSiteDocument } from "../utils/immutable";
 
 const CLIENT_SLUG = import.meta.env.VITE_CLIENT_SLUG || "holdsworth";
 
@@ -44,7 +44,7 @@ export async function publishSiteToBase44(doc: SiteDocument): Promise<void> {
 
   const payload = {
     clientSlug: doc.clientSlug || CLIENT_SLUG,
-    document: { ...doc, updatedAt: new Date().toISOString() },
+    document: touchSiteDocument(doc),
     updatedAt: new Date().toISOString(),
   };
 

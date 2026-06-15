@@ -8,7 +8,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { produce } from "immer";
 import type {
   DeviceMode,
   EditorSelection,
@@ -18,7 +17,7 @@ import type {
   SiteDocument,
 } from "../types";
 import { loadSiteDocument, saveLocalDraft, publishSiteDocument } from "../api/content";
-import { cloneSiteDocument } from "../utils/immutable";
+import { cloneSiteDocument, touchSiteDocument } from "../utils/immutable";
 import { applyAiOperations } from "../ai/applyOperations";
 import type { AiOperation } from "../ai/types";
 import {
@@ -141,7 +140,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     (updater: (draft: SiteDocument) => void) => {
       setSite((prev) => {
         if (!prev) return prev;
-        const next = produce(prev, updater);
+        const draft = cloneSiteDocument(prev);
+        updater(draft);
+        const next = touchSiteDocument(draft);
         pushHistory(next);
         return next;
       });
@@ -241,7 +242,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     const current = historyRef.current.pop()!;
     futureRef.current.push(current);
     const prev = historyRef.current[historyRef.current.length - 1];
-    setSite(prev);
+    setSite(cloneSiteDocument(prev));
     setHistoryTick((t) => t + 1);
   }, []);
 
@@ -249,7 +250,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     const next = futureRef.current.pop();
     if (!next) return;
     historyRef.current.push(next);
-    setSite(next);
+    setSite(cloneSiteDocument(next));
     setHistoryTick((t) => t + 1);
   }, []);
 
@@ -290,7 +291,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     (operations: AiOperation[]) => {
       setSite((prev) => {
         if (!prev) return prev;
-        const next = applyAiOperations(prev, operations);
+        const next = touchSiteDocument(applyAiOperations(cloneSiteDocument(prev), operations));
         pushHistory(next);
         return next;
       });
@@ -303,7 +304,11 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setPublishStatus("publishing");
     setPublishError("");
     try {
-      await publishSiteDocument(site);
+      const saved = await publishSiteDocument(site);
+      setSite(cloneSiteDocument(saved));
+      historyRef.current = [cloneSiteDocument(saved)];
+      futureRef.current = [];
+      setHistoryTick((t) => t + 1);
       setPublishStatus("published");
       setTimeout(() => setPublishStatus("idle"), 3000);
     } catch (err) {
@@ -346,7 +351,6 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       aiPickMode,
       setAiPickMode,
       selectTarget,
-      publishSite,
       applyAiEdits,
     }),
     [

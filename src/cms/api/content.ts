@@ -2,20 +2,40 @@ import { getSupabase, isSupabaseConfigured, STORAGE_BUCKET } from "../supabase/c
 import type { SiteDocument, MediaAsset } from "../types";
 import { createDefaultSiteDocument } from "../seed/defaultSite";
 import { loadPublishedSiteDocument } from "./publish";
+import { cloneSiteDocument, touchSiteDocument } from "../utils/immutable";
 import imageCompression from "browser-image-compression";
 
 const LOCAL_KEY = "cms_site_document";
 const CLIENT_SLUG = import.meta.env.VITE_CLIENT_SLUG || "holdsworth";
 
 export async function loadSiteDocument(): Promise<SiteDocument> {
-  const published = await loadPublishedSiteDocument();
-  if (published) return published;
+  const defaults = createDefaultSiteDocument();
+  const local = mergeSiteDocument(readLocalSiteDocument() ?? defaults, defaults);
 
+  let remote: SiteDocument | null = null;
   if (isSupabaseConfigured) {
-    const doc = await loadFromSupabase();
-    if (doc) return doc;
+    remote = await loadFromSupabase();
   }
-  return loadFromLocal();
+  if (!remote) {
+    remote = await loadPublishedSiteDocument();
+  }
+
+  if (!remote) return cloneSiteDocument(local);
+
+  const localTs = Date.parse(local.updatedAt || "0");
+  const remoteTs = Date.parse(remote.updatedAt || "0");
+  const winner = localTs >= remoteTs ? local : remote;
+  return cloneSiteDocument(mergeSiteDocument(winner, defaults));
+}
+
+function readLocalSiteDocument(): SiteDocument | null {
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as SiteDocument;
+  } catch {
+    return null;
+  }
 }
 
 async function loadFromSupabase(): Promise<SiteDocument | null> {
@@ -55,7 +75,7 @@ function mapPage(p: Record<string, unknown>) {
     slug: p.slug as string,
     title: p.title as string,
     sortOrder: p.sort_order as number,
-    sections: sections
+    sections: [...sections]
       .sort((a, b) => (a.sort_order as number) - (b.sort_order as number))
       .map(mapSection),
   };
@@ -71,7 +91,7 @@ function mapSection(s: Record<string, unknown>) {
     styles: (s.styles as Record<string, unknown>) ?? {},
     stylesTablet: (s.styles_tablet as Record<string, unknown>) ?? {},
     stylesMobile: (s.styles_mobile as Record<string, unknown>) ?? {},
-    blocks: blocks
+    blocks: [...blocks]
       .sort((a, b) => (a.sort_order as number) - (b.sort_order as number))
       .map(mapBlock),
   };
@@ -92,14 +112,9 @@ function mapBlock(b: Record<string, unknown>) {
 
 function loadFromLocal(): SiteDocument {
   const defaults = createDefaultSiteDocument();
-  try {
-    const raw = localStorage.getItem(LOCAL_KEY);
-    if (raw) {
-      const stored = JSON.parse(raw) as SiteDocument;
-      return mergeSiteDocument(stored, defaults);
-    }
-  } catch {
-    /* use default */
+  const stored = readLocalSiteDocument();
+  if (stored) {
+    return mergeSiteDocument(stored, defaults);
   }
   localStorage.setItem(LOCAL_KEY, JSON.stringify(defaults));
   return defaults;
@@ -107,7 +122,8 @@ function loadFromLocal(): SiteDocument {
 
 /** Merge missing pages/sections/blocks from defaults into stored doc */
 export function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument): SiteDocument {
-  const mergedPages = stored.pages.map((page) => {
+  const base = cloneSiteDocument(stored);
+  const mergedPages = base.pages.map((page) => {
     const defaultPage = defaults.pages.find((p) => p.slug === page.slug);
     if (!defaultPage) return page;
 
@@ -115,43 +131,45 @@ export function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument):
     const mergedSections = [...page.sections];
     for (const section of defaultPage.sections) {
       if (!sectionKeys.has(section.sectionKey)) {
-        mergedSections.push(section);
+        mergedSections.push(cloneSiteDocument(section));
         continue;
       }
       const existing = mergedSections.find((s) => s.sectionKey === section.sectionKey)!;
       const blockKeys = new Set(existing.blocks.map((b) => b.blockKey));
       for (const defaultBlock of section.blocks) {
         if (!blockKeys.has(defaultBlock.blockKey)) {
-          existing.blocks.push(defaultBlock);
+          existing.blocks = [...existing.blocks, cloneSiteDocument(defaultBlock)];
         }
       }
     }
     return { ...page, sections: mergedSections };
   });
 
-  const pageSlugs = new Set(stored.pages.map((p) => p.slug));
+  const pageSlugs = new Set(base.pages.map((p) => p.slug));
   for (const page of defaults.pages) {
-    if (!pageSlugs.has(page.slug)) mergedPages.push(page);
+    if (!pageSlugs.has(page.slug)) mergedPages.push(cloneSiteDocument(page));
   }
 
-  return { ...stored, pages: mergedPages };
+  return { ...base, pages: mergedPages };
 }
 
 export async function saveLocalDraft(doc: SiteDocument): Promise<void> {
-  doc.updatedAt = new Date().toISOString();
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(doc));
+  const snapshot = touchSiteDocument(doc);
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
 }
 
-export async function publishSiteDocument(doc: SiteDocument): Promise<void> {
-  doc.updatedAt = new Date().toISOString();
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(doc));
+export async function publishSiteDocument(doc: SiteDocument): Promise<SiteDocument> {
+  const snapshot = touchSiteDocument(doc);
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
 
   const { publishSiteToBase44 } = await import("./publish");
-  await publishSiteToBase44(doc);
+  await publishSiteToBase44(snapshot);
 
   if (isSupabaseConfigured) {
-    await saveToSupabase(doc);
+    await saveToSupabase(snapshot);
   }
+
+  return snapshot;
 }
 
 /** @deprecated Use saveLocalDraft for autosave or publishSiteDocument for live saves */

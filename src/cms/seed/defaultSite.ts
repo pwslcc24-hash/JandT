@@ -214,6 +214,9 @@ export function getJson<T>(
 ): T {
   const b = getBlockValue(doc, pageSlug, sectionKey, blockKey);
   if (!b?.value) return fallback;
-  if (b.value.data !== undefined) return (b.value.data as T) ?? fallback;
-  return (b.value as T) ?? fallback;
+  if (b.value.data !== undefined) {
+    const data = b.value.data as T;
+    return data == null ? fallback : structuredClone(data);
+  }
+  return structuredClone(b.value as T);
 }
