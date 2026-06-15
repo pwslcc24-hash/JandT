@@ -1,10 +1,10 @@
-import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Outlet, Navigate } from "react-router-dom";
 import { EditorProvider } from "@/cms/context/EditorContext";
 import EditorShell from "@/components/editor/EditorShell";
 import WeddingLanding from "@/pages/WeddingLanding";
 import WeddingSection from "@/pages/WeddingSection";
 import WeddingGallery from "@/pages/WeddingGallery";
-import CmsLoginPage from "@/pages/admin/CmsLoginPage";
+import StudioUnlockPage from "@/pages/StudioUnlockPage";
 import AdminLayout from "@/pages/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminPages from "@/pages/admin/AdminPages";
@@ -27,7 +27,8 @@ function App() {
     <BrowserRouter>
       <EditorProvider>
         <Routes>
-          <Route path="/admin/login" element={<CmsLoginPage />} />
+          <Route path="/studio" element={<StudioUnlockPage />} />
+          <Route path="/admin/login" element={<Navigate to="/studio" replace />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="pages" element={<AdminPages />} />

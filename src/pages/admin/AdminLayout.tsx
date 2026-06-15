@@ -15,7 +15,7 @@ export default function AdminLayout() {
   const { isAdmin, isLoading, logout } = useEditor();
 
   if (isLoading) return <div className="admin-loading">Loading…</div>;
-  if (!isAdmin) return <Navigate to="/admin/login" replace />;
+  if (!isAdmin) return <Navigate to="/studio" replace />;
 
   return (
     <div className="admin-layout">

@@ -6,6 +6,8 @@ export type BlockType = "text" | "rich_text" | "image" | "json";
 export interface ElementStyles {
   fontSize?: string;
   fontWeight?: string;
+  fontFamily?: string;
+  lineHeight?: string;
   color?: string;
   backgroundColor?: string;
   borderRadius?: string;
@@ -14,6 +16,7 @@ export interface ElementStyles {
   textAlign?: "left" | "center" | "right";
   width?: string;
   height?: string;
+  zIndex?: string;
 }
 
 export interface ContentBlock {
@@ -68,6 +71,7 @@ export interface MediaAsset {
 
 export interface EditorSelection {
   blockId: string;
-  sectionId: string;
   pageSlug: string;
+  sectionKey: string;
+  blockKey: string;
 }

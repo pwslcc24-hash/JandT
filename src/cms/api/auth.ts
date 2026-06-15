@@ -8,6 +8,9 @@ export interface CmsUser {
   clientId: string | null;
 }
 
+const STUDIO_UNLOCK_KEY = "cms_studio_unlock";
+const STUDIO_PIN = import.meta.env.VITE_STUDIO_PIN ?? "3690";
+
 export async function signIn(email: string, password: string) {
   const sb = getSupabase();
   if (!sb) throw new Error("Supabase not configured");
@@ -44,11 +47,41 @@ export async function fetchProfile(userId: string): Promise<CmsUser | null> {
 
 export async function getSessionUser(): Promise<CmsUser | null> {
   const sb = getSupabase();
-  if (!sb) return getDevSession();
+  if (!sb) return getPinSession() ?? getDevSession();
 
   const { data } = await sb.auth.getSession();
-  if (!data.session?.user) return null;
+  if (!data.session?.user) return getPinSession();
   return fetchProfile(data.session.user.id);
+}
+
+function createStudioUser(): CmsUser {
+  return {
+    id: "studio-owner",
+    email: "owner@studio.local",
+    role: "admin",
+    clientId: "local-holdsworth",
+  };
+}
+
+export function getPinSession(): CmsUser | null {
+  const raw = localStorage.getItem(STUDIO_UNLOCK_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as CmsUser;
+  } catch {
+    return null;
+  }
+}
+
+export function unlockWithPin(pin: string): CmsUser | null {
+  if (pin !== STUDIO_PIN) return null;
+  const user = createStudioUser();
+  localStorage.setItem(STUDIO_UNLOCK_KEY, JSON.stringify(user));
+  return user;
+}
+
+export function clearPinSession() {
+  localStorage.removeItem(STUDIO_UNLOCK_KEY);
 }
 
 /** Dev mode: allow admin without Supabase */
@@ -85,6 +118,7 @@ export function devSignInAsAdmin() {
 
 export function devSignOut() {
   localStorage.removeItem("cms_dev_user");
+  clearPinSession();
 }
 
 export { isSupabaseConfigured };

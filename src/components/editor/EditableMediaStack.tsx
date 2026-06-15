@@ -16,6 +16,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useEditor } from "@/cms/context/EditorContext";
 import { uploadMedia } from "@/cms/api/content";
+import { getJson } from "@/cms/seed/defaultSite";
 import {
   bringForward,
   mediaKindFromFile,
@@ -29,17 +30,14 @@ import { GripVertical, ImagePlus, Plus } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import MediaEditToolbar from "./MediaEditToolbar";
 import MediaRenderer from "./MediaRenderer";
-import type { PhotoAlbum } from "@/cms/mediaTypes";
 
-interface EditableGalleryProps {
-  albumSlug: string;
-  album: PhotoAlbum;
+interface EditableMediaStackProps {
+  pageSlug: string;
 }
 
-function SortableMediaCell({
+function StackCell({
   item,
   index,
-  albumLabel,
   editable,
   uploading,
   targetIndex,
@@ -49,7 +47,6 @@ function SortableMediaCell({
 }: {
   item: MediaItem;
   index: number;
-  albumLabel: string;
   editable: boolean;
   uploading: boolean;
   targetIndex: number | null;
@@ -58,61 +55,53 @@ function SortableMediaCell({
   onRemove: (index: number) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: `media-${index}`,
+    id: `stack-${index}`,
     disabled: !editable,
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: item.zIndex ?? index,
+    zIndex: item.zIndex ?? index + 1,
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={cn("gallery-cell-wrap", isDragging && "gallery-cell-wrap--dragging")}
+      className={cn("media-stack-item", isDragging && "media-stack-item--dragging")}
     >
       <div
-        className={cn("gallery-cell", editable && "gallery-cell--editable cms-editable")}
+        className={cn("media-stack-cell", editable && "media-stack-cell--editable")}
         onClick={() => editable && onPick(index)}
       >
         {item.src ? (
-          <MediaRenderer src={item.src} type={item.type} alt={item.alt || albumLabel} />
+          <MediaRenderer src={item.src} type={item.type} alt={item.alt || "Story media"} />
         ) : (
-          <div className="gallery-placeholder">
-            {editable ? (
-              <>
-                <ImagePlus size={24} />
-                <span>{uploading && targetIndex === index ? "Uploading…" : "Add photo or video"}</span>
-              </>
-            ) : (
-              <span>Photo {index + 1}</span>
-            )}
+          <div className="media-stack-placeholder">
+            <ImagePlus size={22} />
+            <span>{uploading && targetIndex === index ? "Uploading…" : "Add photo or video"}</span>
           </div>
         )}
-        {editable && (
+        {editable && item.src && (
           <>
             <button
               type="button"
-              className="gallery-drag-handle"
+              className="gallery-drag-handle media-stack-handle"
               {...attributes}
               {...listeners}
-              aria-label="Drag to reorder"
+              aria-label="Drag to reposition"
               onClick={(e) => e.stopPropagation()}
             >
               <GripVertical size={16} />
             </button>
-            {item.src && (
-              <MediaEditToolbar
-                uploading={uploading && targetIndex === index}
-                onReplace={() => onPick(index)}
-                onBringFront={() => onLayer(index, "front")}
-                onSendBack={() => onLayer(index, "back")}
-                onRemove={() => onRemove(index)}
-              />
-            )}
+            <MediaEditToolbar
+              uploading={uploading && targetIndex === index}
+              onReplace={() => onPick(index)}
+              onBringFront={() => onLayer(index, "front")}
+              onSendBack={() => onLayer(index, "back")}
+              onRemove={() => onRemove(index)}
+            />
           </>
         )}
       </div>
@@ -120,33 +109,25 @@ function SortableMediaCell({
   );
 }
 
-export default function EditableGallery({ albumSlug, album }: EditableGalleryProps) {
+export default function EditableMediaStack({ pageSlug }: EditableMediaStackProps) {
   const { site, editMode, isAdmin, updateBlockValue } = useEditor();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
   const editable = editMode && isAdmin;
 
-  const rawImages = album.images?.length
-    ? album.images
-    : [{ src: "", alt: "", type: "image" as const, zIndex: 0 }];
+  const fallback = { items: [] as MediaItem[] };
+  const stored = site
+    ? getJson<{ items: MediaItem[] }>(site, pageSlug, "media", "media-stack", fallback)
+    : fallback;
 
-  const items = rawImages.map(normalizeMediaItem);
+  const items = sortByLayer((stored.items ?? []).map(normalizeMediaItem));
 
-  const saveImages = useCallback(
+  const saveItems = useCallback(
     (next: MediaItem[]) => {
-      if (!site) return;
-      const page = site.pages.find((p) => p.slug === "photos");
-      const block = page?.sections
-        .find((s) => s.sectionKey === "photo-albums")
-        ?.blocks.find((b) => b.blockKey === "photo-albums");
-      const albums = (block?.value?.items as PhotoAlbum[]) ?? [];
-      const nextAlbums = albums.map((a) =>
-        a.slug === albumSlug ? { ...a, images: next } : a
-      );
-      updateBlockValue("photos", "photo-albums", "photo-albums", { items: nextAlbums });
+      updateBlockValue(pageSlug, "media", "media-stack", { items: next });
     },
-    [site, albumSlug, updateBlockValue]
+    [pageSlug, updateBlockValue]
   );
 
   const handleFile = async (file: File, index: number) => {
@@ -159,26 +140,29 @@ export default function EditableGallery({ albumSlug, album }: EditableGalleryPro
         src: asset.publicUrl,
         alt: file.name,
         type: mediaKindFromFile(file),
-        zIndex: next[index]?.zIndex ?? index,
+        zIndex: next[index]?.zIndex ?? index + 1,
       };
-      saveImages(next);
+      saveItems(next);
     } finally {
       setUploading(false);
       setTargetIndex(null);
     }
   };
 
-  const addSlot = () =>
-    saveImages([...items, { src: "", alt: "", type: "image", zIndex: items.length }]);
+  const addItem = () => {
+    saveItems([
+      ...items,
+      { src: "", alt: "", type: "image", zIndex: items.length + 1 },
+    ]);
+  };
 
   const removeItem = (index: number) => {
-    const next = items.filter((_, i) => i !== index);
-    saveImages(next.length ? next : [{ src: "", alt: "", type: "image", zIndex: 0 }]);
+    saveItems(items.filter((_, i) => i !== index));
   };
 
   const layerItem = (index: number, dir: "front" | "back") => {
     const next = dir === "front" ? bringForward(items, index) : sendBackward(items, index);
-    saveImages(next);
+    saveItems(next);
   };
 
   const sensors = useSensors(
@@ -189,23 +173,24 @@ export default function EditableGallery({ albumSlug, album }: EditableGalleryPro
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    const oldIndex = items.findIndex((_, i) => `media-${i}` === active.id);
-    const newIndex = items.findIndex((_, i) => `media-${i}` === over.id);
+    const oldIndex = items.findIndex((_, i) => `stack-${i}` === active.id);
+    const newIndex = items.findIndex((_, i) => `stack-${i}` === over.id);
     if (oldIndex === -1 || newIndex === -1) return;
     const next = [...items];
     const [moved] = next.splice(oldIndex, 1);
     next.splice(newIndex, 0, moved);
-    saveImages(next.map((item, i) => ({ ...item, zIndex: i })));
+    saveItems(next.map((item, i) => ({ ...item, zIndex: i + 1 })));
   };
 
-  const sortIds = items.map((_, i) => `media-${i}`);
+  if (!editable && !items.some((i) => i.src)) return null;
 
-  const grid = items.map((item, i) => (
-    <SortableMediaCell
-      key={`${albumSlug}-${i}-${item.src}`}
+  const sortIds = items.map((_, i) => `stack-${i}`);
+
+  const cells = items.map((item, i) => (
+    <StackCell
+      key={`stack-${i}-${item.src}`}
       item={item}
       index={i}
-      albumLabel={album.label}
       editable={editable}
       uploading={uploading}
       targetIndex={targetIndex}
@@ -219,24 +204,29 @@ export default function EditableGallery({ albumSlug, album }: EditableGalleryPro
   ));
 
   return (
-    <div className="gallery-grid">
-      {editable ? (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-          <SortableContext items={sortIds} strategy={rectSortingStrategy}>
-            {grid}
-          </SortableContext>
-        </DndContext>
-      ) : (
-        grid
-      )}
-
+    <section className="media-stack-section">
       {editable && (
-        <button type="button" className="gallery-add-btn" onClick={addSlot}>
-          <Plus size={20} />
-          Add photo / video
-        </button>
+        <p className="media-stack-hint">
+          Drag to reposition · Front / Back controls layer order · Tap to upload photos or videos
+        </p>
       )}
-
+      <div className="media-stack-canvas">
+        {editable ? (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+            <SortableContext items={sortIds} strategy={rectSortingStrategy}>
+              {cells}
+            </SortableContext>
+          </DndContext>
+        ) : (
+          cells
+        )}
+        {editable && (
+          <button type="button" className="media-stack-add" onClick={addItem}>
+            <Plus size={18} />
+            Add media
+          </button>
+        )}
+      </div>
       <input
         ref={inputRef}
         type="file"
@@ -248,6 +238,6 @@ export default function EditableGallery({ albumSlug, album }: EditableGalleryPro
           e.target.value = "";
         }}
       />
-    </div>
+    </section>
   );
 }

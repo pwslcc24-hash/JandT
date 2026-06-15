@@ -5,7 +5,7 @@ import { WeddingIcon } from "@/components/wedding/icons";
 import SideMenu from "@/components/wedding/SideMenu";
 import ExploreSection from "@/components/wedding/ExploreSection";
 import EditableText from "@/components/editor/EditableText";
-import EditableImage from "@/components/editor/EditableImage";
+import EditableMedia from "@/components/editor/EditableMedia";
 import { EditableSectionList } from "@/components/editor/EditableSection";
 import { useSiteContent } from "@/cms/hooks/useSiteContent";
 
@@ -30,29 +30,21 @@ export default function WeddingLanding() {
 
   const renderHero = () => (
     <div className="hero">
-      {videoUrl ? (
-        <EditableImage
-          pageSlug="home"
-          sectionKey="hero"
-          blockKey="hero-video"
-          fallbackUrl={videoUrl}
-          className="hero-media-wrap"
-          imgClassName="video-bg-media"
-        />
-      ) : (
-        <EditableImage
-          pageSlug="home"
-          sectionKey="hero"
-          blockKey="hero-video"
-          fallbackUrl=""
-          className="hero-media-wrap"
-        >
-          <div className="video-bg">
-            <WeddingIcon name="play" className="video-bg-icon" />
-            <span>Video background</span>
-          </div>
-        </EditableImage>
-      )}
+      <EditableMedia
+        pageSlug="home"
+        sectionKey="hero"
+        blockKey="hero-video"
+        fallbackUrl={videoUrl}
+        fallbackType="video"
+        className="hero-media-wrap"
+        mediaClassName="video-bg-media"
+        variant="background"
+      >
+        <div className="video-bg">
+          <WeddingIcon name="play" className="video-bg-icon" />
+          <span>Tap to add hero photo or video</span>
+        </div>
+      </EditableMedia>
 
       <div className="video-overlay" />
 

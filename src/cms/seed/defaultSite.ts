@@ -34,7 +34,7 @@ export function createDefaultSiteDocument(): SiteDocument {
               block("hero-names", "text", { text: "Taylor & Jayden" }),
               block("hero-lastname", "text", { text: "Holdsworth" }),
               block("hero-date", "text", { text: "August 5, 2026" }),
-              block("hero-video", "image", { url: "", alt: "Hero background" }),
+              block("hero-video", "image", { url: "", mediaType: "video", alt: "Hero background" }),
             ],
           },
           {
@@ -123,26 +123,41 @@ export function createDefaultSiteDocument(): SiteDocument {
 
 function pageContent(slug: string, title: string, paragraphs: string[]) {
   const html = paragraphs.map((p) => `<p>${p}</p>`).join("");
+  const sections: SiteDocument["pages"][0]["sections"] = [
+    {
+      id: `sec-${slug}-content`,
+      sectionKey: "content",
+      sectionType: "content",
+      sortOrder: 0,
+      styles: {},
+      stylesTablet: {},
+      stylesMobile: {},
+      blocks: [
+        block("title", "text", { text: title }),
+        block("body", "rich_text", { html }),
+      ],
+    },
+  ];
+
+  if (slug === "story") {
+    sections.push({
+      id: "sec-story-media",
+      sectionKey: "media",
+      sectionType: "media-stack",
+      sortOrder: 1,
+      styles: {},
+      stylesTablet: {},
+      stylesMobile: {},
+      blocks: [block("media-stack", "json", { items: [] })],
+    });
+  }
+
   return {
     id: `page-${slug}`,
     slug,
     title,
     sortOrder: slug === "info" ? 2 : slug === "story" ? 3 : 4,
-    sections: [
-      {
-        id: `sec-${slug}-content`,
-        sectionKey: "content",
-        sectionType: "content",
-        sortOrder: 0,
-        styles: {},
-        stylesTablet: {},
-        stylesMobile: {},
-        blocks: [
-          block("title", "text", { text: title }),
-          block("body", "rich_text", { html }),
-        ],
-      },
-    ],
+    sections,
   };
 }
 

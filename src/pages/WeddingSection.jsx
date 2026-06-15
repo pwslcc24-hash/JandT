@@ -5,6 +5,7 @@ import PageChrome from "@/components/wedding/PageChrome";
 import PhotoAlbumList from "@/components/wedding/PhotoAlbumList";
 import EditableText from "@/components/editor/EditableText";
 import EditableRichText from "@/components/editor/EditableRichText";
+import EditableMediaStack from "@/components/editor/EditableMediaStack";
 import { usePhotoAlbums, usePageContent } from "@/cms/hooks/useSiteContent";
 
 export default function WeddingSection() {
@@ -53,6 +54,7 @@ export default function WeddingSection() {
               fallback={pageContent.bodyHtml}
               className="section-body-rich"
             />
+            <EditableMediaStack pageSlug={slug} />
           </>
         )}
       </motion.div>

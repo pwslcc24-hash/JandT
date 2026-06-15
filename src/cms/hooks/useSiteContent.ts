@@ -1,7 +1,7 @@
 import { useEditor } from "@/cms/context/EditorContext";
 import { getText, getJson } from "@/cms/seed/defaultSite";
 import { wedding } from "@/config/wedding";
-import type { PhotoAlbum } from "@/components/wedding/PhotoAlbumList";
+import type { PhotoAlbum } from "@/cms/mediaTypes";
 
 /** Read content from CMS document with wedding.js fallback */
 export function useSiteContent() {

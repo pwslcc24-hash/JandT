@@ -101,13 +101,35 @@ function loadFromLocal(): SiteDocument {
   return defaults;
 }
 
-/** Merge missing pages/sections from defaults into stored doc */
+/** Merge missing pages/sections/blocks from defaults into stored doc */
 function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument): SiteDocument {
+  const mergedPages = stored.pages.map((page) => {
+    const defaultPage = defaults.pages.find((p) => p.slug === page.slug);
+    if (!defaultPage) return page;
+
+    const sectionKeys = new Set(page.sections.map((s) => s.sectionKey));
+    const mergedSections = [...page.sections];
+    for (const section of defaultPage.sections) {
+      if (!sectionKeys.has(section.sectionKey)) {
+        mergedSections.push(section);
+        continue;
+      }
+      const existing = mergedSections.find((s) => s.sectionKey === section.sectionKey)!;
+      const blockKeys = new Set(existing.blocks.map((b) => b.blockKey));
+      for (const defaultBlock of section.blocks) {
+        if (!blockKeys.has(defaultBlock.blockKey)) {
+          existing.blocks.push(defaultBlock);
+        }
+      }
+    }
+    return { ...page, sections: mergedSections };
+  });
+
   const pageSlugs = new Set(stored.pages.map((p) => p.slug));
-  const mergedPages = [...stored.pages];
   for (const page of defaults.pages) {
     if (!pageSlugs.has(page.slug)) mergedPages.push(page);
   }
+
   return { ...stored, pages: mergedPages };
 }
 
@@ -163,11 +185,14 @@ export async function uploadMedia(
   file: File,
   clientId: string
 ): Promise<MediaAsset> {
-  const compressed = await imageCompression(file, {
-    maxSizeMB: 1.5,
-    maxWidthOrHeight: 2400,
-    useWebWorker: true,
-  });
+  const isVideo = file.type.startsWith("video/");
+  const uploadBlob = isVideo
+    ? file
+    : await imageCompression(file, {
+        maxSizeMB: 1.5,
+        maxWidthOrHeight: 2400,
+        useWebWorker: true,
+      });
 
   const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
   const storagePath = `${CLIENT_SLUG}/${fileName}`;
@@ -176,7 +201,10 @@ export async function uploadMedia(
     const sb = getSupabase()!;
     const { error } = await sb.storage
       .from(STORAGE_BUCKET)
-      .upload(storagePath, compressed, { upsert: true });
+      .upload(storagePath, uploadBlob, {
+        upsert: true,
+        contentType: file.type || undefined,
+      });
     if (error) throw error;
 
     const { data: urlData } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(storagePath);
@@ -187,7 +215,7 @@ export async function uploadMedia(
       storagePath,
       fileName: file.name,
       altText: "",
-      sizeBytes: compressed.size,
+      sizeBytes: uploadBlob.size,
     };
 
     await sb.from("media_assets").insert({
@@ -196,22 +224,21 @@ export async function uploadMedia(
       storage_path: storagePath,
       public_url: asset.publicUrl,
       file_name: file.name,
-      mime_type: compressed.type,
-      size_bytes: compressed.size,
+      mime_type: file.type,
+      size_bytes: uploadBlob.size,
     });
 
     return asset;
   }
 
-  // Local fallback: data URL
-  const dataUrl = await blobToDataUrl(compressed);
+  const dataUrl = await blobToDataUrl(uploadBlob);
   return {
     id: crypto.randomUUID(),
     publicUrl: dataUrl,
     storagePath,
     fileName: file.name,
     altText: "",
-    sizeBytes: compressed.size,
+    sizeBytes: uploadBlob.size,
   };
 }
 

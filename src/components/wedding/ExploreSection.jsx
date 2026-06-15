@@ -1,5 +1,5 @@
 import { useCarouselMode } from "@/hooks/useCarouselMode";
-import ExploreCard from "./ExploreCard";
+import EditableExploreCard from "./EditableExploreCard";
 import ExploreCarousel from "./ExploreCarousel";
 import EditableText from "@/components/editor/EditableText";
 
@@ -21,7 +21,7 @@ export default function ExploreSection({ nav = [], label = "Explore" }) {
       ) : (
         <div className="cards-grid">
           {nav.map((item, i) => (
-            <ExploreCard key={item.slug} item={item} index={i} />
+            <EditableExploreCard key={item.slug} item={item} index={i} />
           ))}
         </div>
       )}

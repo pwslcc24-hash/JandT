@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import ExploreCard from "./ExploreCard";
+import EditableExploreCard from "./EditableExploreCard";
 
 export default function ExploreCarousel({ nav }) {
   const scrollRef = useRef(null);
@@ -50,7 +50,7 @@ export default function ExploreCarousel({ nav }) {
       <div className="cards-scroll" ref={scrollRef}>
         {nav.map((item, i) => (
           <div key={item.slug} className="carousel-slide" data-slide={i}>
-            <ExploreCard item={item} index={i} />
+            <EditableExploreCard item={item} index={i} />
           </div>
         ))}
       </div>

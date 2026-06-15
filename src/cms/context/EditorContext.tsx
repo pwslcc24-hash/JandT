@@ -24,6 +24,7 @@ import {
   isSupabaseConfigured,
   signIn,
   signOut,
+  unlockWithPin as authUnlockWithPin,
   type CmsUser,
 } from "../api/auth";
 
@@ -45,6 +46,7 @@ interface EditorContextValue {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   devLogin: () => void;
+  unlockWithPin: (pin: string) => boolean;
   updateBlockText: (
     pageSlug: string,
     sectionKey: string,
@@ -243,9 +245,17 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     else devSignOut();
     setUser(null);
     setEditMode(false);
+    setSelection(null);
   };
 
   const devLogin = () => setUser(devSignInAsAdmin());
+
+  const unlockWithPin = (pin: string) => {
+    const user = authUnlockWithPin(pin);
+    if (!user) return false;
+    setUser(user);
+    return true;
+  };
 
   const value = useMemo(
     () => ({
@@ -263,6 +273,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       login,
       logout,
       devLogin,
+      unlockWithPin,
       updateBlockText,
       updateBlockValue,
       updateBlockStyles,

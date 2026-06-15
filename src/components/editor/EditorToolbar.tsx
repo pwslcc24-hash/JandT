@@ -8,6 +8,7 @@ import {
   Redo2,
   Pencil,
   PencilOff,
+  Lock,
 } from "lucide-react";
 
 export default function EditorToolbar() {
@@ -22,6 +23,7 @@ export default function EditorToolbar() {
     redo,
     canUndo,
     canRedo,
+    logout,
   } = useEditor();
 
   if (!isAdmin) return null;
@@ -73,6 +75,15 @@ export default function EditorToolbar() {
         {saveStatus === "saved" && "Saved"}
         {saveStatus === "error" && "Save failed"}
       </span>
+
+      <button
+        type="button"
+        className="editor-toolbar-btn"
+        onClick={() => logout()}
+        title="Lock studio"
+      >
+        <Lock size={16} />
+      </button>
     </div>
   );
 }
