@@ -1,4 +1,5 @@
 import type { SiteDocument } from "../types";
+import { sortedCopy } from "../utils/immutable";
 
 /** Compact site snapshot for the LLM — keeps token use reasonable */
 export function buildSiteSnapshot(site: SiteDocument, currentPageSlug: string) {
@@ -8,9 +9,7 @@ export function buildSiteSnapshot(site: SiteDocument, currentPageSlug: string) {
       slug: page.slug,
       title: page.title,
       isCurrent: page.slug === currentPageSlug,
-      sections: page.sections
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((section) => ({
+      sections: sortedCopy(page.sections, (a, b) => a.sortOrder - b.sortOrder).map((section) => ({
           sectionKey: section.sectionKey,
           sectionType: section.sectionType,
           sortOrder: section.sortOrder,

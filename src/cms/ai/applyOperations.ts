@@ -81,7 +81,7 @@ export function applyAiOperations(doc: SiteDocument, operations: AiOperation[]):
         }
 
         page.sections.push(section);
-        page.sections.sort((a, b) => a.sortOrder - b.sortOrder);
+        page.sections = [...page.sections].sort((a, b) => a.sortOrder - b.sortOrder);
         page.sections.forEach((s, i) => {
           s.sortOrder = i;
         });
@@ -103,7 +103,7 @@ export function applyAiOperations(doc: SiteDocument, operations: AiOperation[]):
           const section = page.sections.find((s) => s.sectionKey === key);
           if (section) section.sortOrder = index;
         });
-        page.sections.sort((a, b) => a.sortOrder - b.sortOrder);
+        page.sections = [...page.sections].sort((a, b) => a.sortOrder - b.sortOrder);
         break;
       }
       default:

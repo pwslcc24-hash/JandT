@@ -3,7 +3,7 @@ import { useEditorTarget } from "@/cms/hooks/useEditorTarget";
 import EditableText from "./EditableText";
 import EditableRichText from "./EditableRichText";
 import EditableMedia from "./EditableMedia";
-import type { ContentBlock, SiteSection } from "@/cms/types";
+import { sortedCopy } from "@/cms/utils/immutable";
 
 interface EditableGenericSectionProps {
   pageSlug: string;
@@ -105,9 +105,9 @@ export default function EditableGenericSection({
       onClick={(e) => handleTargetPointer(e)}
     >
       <div className="generic-section-inner">
-        {resolved.blocks
-          .sort((a, b) => a.sortOrder - b.sortOrder)
-          .map((block) => renderBlock(pageSlug, sectionKey, block))}
+        {sortedCopy(resolved.blocks, (a, b) => a.sortOrder - b.sortOrder).map((block) =>
+          renderBlock(pageSlug, sectionKey, block)
+        )}
       </div>
     </section>
   );

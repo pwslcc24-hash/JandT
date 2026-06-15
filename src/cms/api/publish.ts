@@ -3,6 +3,7 @@ import { appParams } from "@/lib/app-params";
 import type { SiteDocument } from "../types";
 import { createDefaultSiteDocument } from "../seed/defaultSite";
 import { mergeSiteDocument } from "./content";
+import { cloneSiteDocument } from "../utils/immutable";
 
 const CLIENT_SLUG = import.meta.env.VITE_CLIENT_SLUG || "holdsworth";
 
@@ -30,7 +31,7 @@ export async function loadPublishedSiteDocument(): Promise<SiteDocument | null> 
     const record = records?.[0];
     if (!record?.document) return null;
 
-    return mergeSiteDocument(record.document, createDefaultSiteDocument());
+    return mergeSiteDocument(cloneSiteDocument(record.document), createDefaultSiteDocument());
   } catch {
     return null;
   }

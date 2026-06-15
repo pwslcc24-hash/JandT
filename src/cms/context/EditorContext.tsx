@@ -18,6 +18,7 @@ import type {
   SiteDocument,
 } from "../types";
 import { loadSiteDocument, saveLocalDraft, publishSiteDocument } from "../api/content";
+import { cloneSiteDocument } from "../utils/immutable";
 import { applyAiOperations } from "../ai/applyOperations";
 import type { AiOperation } from "../ai/types";
 import {
@@ -122,9 +123,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     Promise.all([getSessionUser(), loadSiteDocument()]).then(([u, doc]) => {
+      const initial = cloneSiteDocument(doc);
       setUser(u);
-      setSite(doc);
-      historyRef.current = [doc];
+      setSite(initial);
+      historyRef.current = [initial];
       setIsLoading(false);
     });
   }, []);
@@ -196,7 +198,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     ) => {
       commitSite((draft) => {
         const block = findBlock(draft, pageSlug, sectionKey, blockKey);
-        if (block) Object.assign(block.value, patch);
+        if (block) block.value = { ...block.value, ...patch };
       });
     },
     [commitSite]
@@ -213,7 +215,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         const block = findBlock(draft, pageSlug, sectionKey, blockKey);
         if (!block) return;
         const key = styleKey(deviceMode);
-        Object.assign(block[key], styles);
+        block[key] = { ...block[key], ...styles };
       });
     },
     [commitSite, deviceMode]
@@ -228,7 +230,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
           const sec = page.sections.find((s) => s.id === id);
           if (sec) sec.sortOrder = i;
         });
-        page.sections.sort((a, b) => a.sortOrder - b.sortOrder);
+        page.sections = [...page.sections].sort((a, b) => a.sortOrder - b.sortOrder);
       });
     },
     [commitSite]
