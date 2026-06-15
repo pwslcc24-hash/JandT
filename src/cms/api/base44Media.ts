@@ -21,12 +21,8 @@ export async function uploadBlobToBase44(
 
   const file =
     blob instanceof File ? blob : new File([blob], fileName, { type: mimeType || blob.type });
-  const formData = new FormData();
-  formData.append("file", file, file.name);
 
-  const response = (await base44.integrations.Core.UploadFile(
-    formData
-  )) as UploadFileResponse;
+  const response = (await base44.integrations.Core.UploadFile({ file })) as UploadFileResponse;
 
   const url = response?.file_url ?? response?.url;
   if (!url) {
