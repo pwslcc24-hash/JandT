@@ -1,5 +1,7 @@
 import { useEditor } from "@/cms/context/EditorContext";
 import type { ElementStyles } from "@/cms/types";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
 
 const FONT_PRESETS = [
   { label: "S", value: "14px" },
@@ -22,7 +24,15 @@ function parseFontSize(value?: string): number {
   return Number.isFinite(n) ? n : 18;
 }
 
-export default function PropertiesPanel() {
+interface PropertiesPanelProps {
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
+}
+
+export default function PropertiesPanel({
+  collapsed,
+  onToggleCollapsed,
+}: PropertiesPanelProps) {
   const {
     editMode,
     isAdmin,
@@ -59,11 +69,38 @@ export default function PropertiesPanel() {
       next
     );
 
+  if (collapsed) {
+    return (
+      <aside className="properties-panel properties-panel--collapsed">
+        <button
+          type="button"
+          className="properties-panel-expand"
+          onClick={onToggleCollapsed}
+          title="Show properties"
+        >
+          <SlidersHorizontal size={18} />
+          <span>Props</span>
+          <ChevronLeft size={16} />
+        </button>
+      </aside>
+    );
+  }
+
   return (
     <aside className="properties-panel">
       <div className="properties-panel-header">
         <h3>Properties</h3>
-        <span className="properties-device">{deviceMode}</span>
+        <div className="properties-panel-header-actions">
+          <span className="properties-device">{deviceMode}</span>
+          <button
+            type="button"
+            className="properties-panel-minimize"
+            onClick={onToggleCollapsed}
+            title="Minimize properties"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
       </div>
       <p className="properties-selection">
         {selection.sectionKey} / {selection.blockKey}
@@ -81,9 +118,10 @@ export default function PropertiesPanel() {
                   <button
                     key={label}
                     type="button"
-                    className={`properties-pill${
-                      (styles.fontFamily ?? "") === value ? " active" : ""
-                    }`}
+                    className={cn(
+                      "properties-pill",
+                      (styles.fontFamily ?? "") === value && "active"
+                    )}
                     onClick={() => patch({ fontFamily: value || undefined })}
                   >
                     {label}
@@ -108,9 +146,7 @@ export default function PropertiesPanel() {
                   <button
                     key={label}
                     type="button"
-                    className={`properties-pill${
-                      styles.fontSize === value ? " active" : ""
-                    }`}
+                    className={cn("properties-pill", styles.fontSize === value && "active")}
                     onClick={() => patch({ fontSize: value })}
                   >
                     {label}
