@@ -199,6 +199,6 @@ export function getJson<T>(
 ): T {
   const b = getBlockValue(doc, pageSlug, sectionKey, blockKey);
   if (!b?.value) return fallback;
-  const v = b.value.data ?? b.value.items ?? b.value;
-  return (v as T) ?? fallback;
+  if (b.value.data !== undefined) return (b.value.data as T) ?? fallback;
+  return (b.value as T) ?? fallback;
 }

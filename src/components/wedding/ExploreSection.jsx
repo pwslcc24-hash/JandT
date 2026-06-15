@@ -3,7 +3,7 @@ import ExploreCard from "./ExploreCard";
 import ExploreCarousel from "./ExploreCarousel";
 import EditableText from "@/components/editor/EditableText";
 
-export default function ExploreSection({ nav, label = "Explore" }) {
+export default function ExploreSection({ nav = [], label = "Explore" }) {
   const isCarousel = useCarouselMode();
 
   return (

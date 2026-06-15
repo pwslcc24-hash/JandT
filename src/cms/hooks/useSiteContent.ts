@@ -35,7 +35,7 @@ export function useSiteContent() {
   const nav = site
     ? getJson<{ items: typeof wedding.nav }>(site, "home", "explore", "explore-cards", {
         items: wedding.nav,
-      }).items
+      }).items ?? wedding.nav
     : wedding.nav;
 
   const banner = {
