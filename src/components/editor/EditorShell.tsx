@@ -1,10 +1,11 @@
 import EditorToolbar from "./EditorToolbar";
 import PropertiesPanel from "./PropertiesPanel";
+import AiEditorPanel from "./AiEditorPanel";
 import { useEditor } from "@/cms/context/EditorContext";
 import { cn } from "@/lib/utils";
 
 export default function EditorShell({ children }: { children: React.ReactNode }) {
-  const { editMode, isAdmin, deviceMode } = useEditor();
+  const { editMode, isAdmin, deviceMode, aiPanelOpen, aiPickMode } = useEditor();
 
   return (
     <>
@@ -13,6 +14,8 @@ export default function EditorShell({ children }: { children: React.ReactNode })
         className={cn(
           "editor-viewport",
           editMode && isAdmin && "editor-viewport--editing",
+          editMode && aiPanelOpen && "editor-viewport--ai-open",
+          editMode && aiPickMode && "editor-viewport--pick-mode",
           editMode && deviceMode === "tablet" && "editor-viewport--tablet",
           editMode && deviceMode === "mobile" && "editor-viewport--mobile"
         )}
@@ -20,6 +23,7 @@ export default function EditorShell({ children }: { children: React.ReactNode })
         {children}
       </div>
       <PropertiesPanel />
+      <AiEditorPanel />
     </>
   );
 }

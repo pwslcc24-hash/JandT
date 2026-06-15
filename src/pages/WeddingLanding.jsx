@@ -6,6 +6,7 @@ import SideMenu from "@/components/wedding/SideMenu";
 import ExploreSection from "@/components/wedding/ExploreSection";
 import EditableText from "@/components/editor/EditableText";
 import EditableMedia from "@/components/editor/EditableMedia";
+import EditableGenericSection from "@/components/editor/EditableGenericSection";
 import { EditableSectionList } from "@/components/editor/EditableSection";
 import { useSiteContent } from "@/cms/hooks/useSiteContent";
 import { useEditor } from "@/cms/context/EditorContext";
@@ -28,7 +29,14 @@ export default function WeddingLanding() {
     if (sectionKey === "hero") return renderHero();
     if (sectionKey === "explore") return renderExplore();
     if (sectionKey === "banner") return renderBanner();
-    return null;
+    return (
+      <EditableGenericSection
+        key={sectionId}
+        pageSlug="home"
+        sectionKey={sectionKey}
+        variant="landing"
+      />
+    );
   };
 
   const renderHero = () => (

@@ -9,6 +9,7 @@ import {
   Pencil,
   PencilOff,
   Lock,
+  Sparkles,
 } from "lucide-react";
 
 export default function EditorToolbar() {
@@ -24,6 +25,8 @@ export default function EditorToolbar() {
     canUndo,
     canRedo,
     logout,
+    aiPanelOpen,
+    setAiPanelOpen,
   } = useEditor();
 
   if (!isAdmin) return null;
@@ -51,6 +54,16 @@ export default function EditorToolbar() {
           </button>
 
           <div className="editor-toolbar-divider" />
+
+          <button
+            type="button"
+            className={cn("editor-toolbar-btn", aiPanelOpen && "active")}
+            onClick={() => setAiPanelOpen(!aiPanelOpen)}
+            title="AI Editor"
+          >
+            <Sparkles size={16} />
+            AI Edit
+          </button>
 
           <div className="editor-device-group">
             {(["desktop", "tablet", "mobile"] as const).map((d) => (

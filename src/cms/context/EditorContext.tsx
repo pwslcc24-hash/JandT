@@ -17,6 +17,8 @@ import type {
   SiteDocument,
 } from "../types";
 import { loadSiteDocument, saveSiteDocument } from "../api/content";
+import { applyAiOperations } from "../ai/applyOperations";
+import type { AiOperation } from "../ai/types";
 import {
   devSignInAsAdmin,
   devSignOut,
@@ -75,6 +77,12 @@ interface EditorContextValue {
     sectionKey: string,
     blockKey: string
   ) => ElementStyles;
+  aiPanelOpen: boolean;
+  setAiPanelOpen: (v: boolean) => void;
+  aiPickMode: boolean;
+  setAiPickMode: (v: boolean) => void;
+  selectTarget: (s: EditorSelection) => void;
+  applyAiEdits: (operations: AiOperation[]) => void;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -87,6 +95,19 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [site, setSite] = useState<SiteDocument | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [selection, setSelection] = useState<EditorSelection | null>(null);
+  const [aiPanelOpen, setAiPanelOpenState] = useState(false);
+  const [aiPickMode, setAiPickMode] = useState(false);
+
+  const setAiPanelOpen = useCallback((open: boolean) => {
+    setAiPanelOpenState(open);
+    setAiPickMode(open);
+  }, []);
+
+  const selectTarget = useCallback((target: EditorSelection) => {
+    setSelection(target);
+    setAiPanelOpenState(true);
+    setAiPickMode(true);
+  }, []);
 
   const historyRef = useRef<SiteDocument[]>([]);
   const futureRef = useRef<SiteDocument[]>([]);
@@ -257,6 +278,18 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     return true;
   };
 
+  const applyAiEdits = useCallback(
+    (operations: AiOperation[]) => {
+      setSite((prev) => {
+        if (!prev) return prev;
+        const next = applyAiOperations(prev, operations);
+        pushHistory(next);
+        return next;
+      });
+    },
+    [pushHistory]
+  );
+
   const value = useMemo(
     () => ({
       user,
@@ -283,6 +316,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       canUndo: historyRef.current.length > 1,
       canRedo: futureRef.current.length > 0,
       getBlockStyles,
+      aiPanelOpen,
+      setAiPanelOpen,
+      aiPickMode,
+      setAiPickMode,
+      selectTarget,
+      applyAiEdits,
     }),
     [
       user,
@@ -292,6 +331,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       site,
       saveStatus,
       selection,
+      aiPanelOpen,
+      aiPickMode,
       updateBlockText,
       updateBlockValue,
       updateBlockStyles,
@@ -299,6 +340,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       undo,
       redo,
       getBlockStyles,
+      setAiPanelOpen,
+      selectTarget,
+      applyAiEdits,
       historyTick,
     ]
   );

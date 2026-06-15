@@ -1,4 +1,5 @@
 import { useEditor } from "@/cms/context/EditorContext";
+import { useEditorTarget } from "@/cms/hooks/useEditorTarget";
 import { uploadMedia } from "@/cms/api/content";
 import { MEDIA_ACCEPT, mediaKindFromFile, isMediaFile, type MediaKind } from "@/cms/mediaTypes";
 import { cn } from "@/lib/utils";
@@ -45,9 +46,18 @@ export default function EditableMedia({
   const editable = editMode && isAdmin;
   const isBackground = variant === "background";
 
+  const { targetClass, handleTargetPointer, aiPickMode } = useEditorTarget({
+    pageSlug,
+    sectionKey,
+    blockKey,
+    blockId: block?.id,
+    label: `${sectionKey} / ${blockKey}`,
+  });
+
   const openPicker = (e?: React.MouseEvent) => {
+    if (e && handleTargetPointer(e)) return;
     e?.stopPropagation();
-    if (!editable) return;
+    if (!editable || aiPickMode) return;
     setError("");
     inputRef.current?.click();
   };
@@ -78,7 +88,7 @@ export default function EditableMedia({
   );
 
   const onDrop = (e: React.DragEvent) => {
-    if (!editable) return;
+    if (!editable || aiPickMode) return;
     e.preventDefault();
     e.stopPropagation();
     const file = e.dataTransfer.files[0];
@@ -91,7 +101,8 @@ export default function EditableMedia({
         "cms-editable-media",
         isBackground && "cms-editable-media--bg",
         editable && "cms-editable-media--editable",
-        editable && !url && "cms-editable-media--empty"
+        editable && !url && "cms-editable-media--empty",
+        targetClass
       )}
       onClick={openPicker}
       onDragOver={(e) => editable && e.preventDefault()}

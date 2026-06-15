@@ -1,4 +1,5 @@
 import { useEditor } from "@/cms/context/EditorContext";
+import { useEditorTarget } from "@/cms/hooks/useEditorTarget";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useRef } from "react";
 import ResizableBlock from "./ResizableBlock";
@@ -44,6 +45,14 @@ export default function EditableText({
     selection?.pageSlug === pageSlug;
   const editable = editMode && isAdmin;
 
+  const { targetClass, handleTargetPointer, aiPickMode } = useEditorTarget({
+    pageSlug,
+    sectionKey,
+    blockKey,
+    blockId: block?.id,
+    label: `${sectionKey} / ${blockKey}`,
+  });
+
   useEffect(() => {
     if (ref.current && ref.current.textContent !== text) {
       ref.current.textContent = text;
@@ -58,8 +67,15 @@ export default function EditableText({
 
   const handleClick = (e: React.MouseEvent) => {
     if (!editable) return;
+    if (handleTargetPointer(e)) return;
     e.stopPropagation();
-    setSelection({ pageSlug, sectionKey, blockKey, blockId: block?.id ?? blockKey });
+    setSelection({
+      pageSlug,
+      sectionKey,
+      blockKey,
+      blockId: block?.id ?? blockKey,
+      targetType: "block",
+    });
   };
 
   const inner = (
@@ -68,10 +84,11 @@ export default function EditableText({
       className={cn(
         className,
         editable && !resizable && "cms-editable",
-        editable && !resizable && isSelected && "cms-selected"
+        editable && !resizable && isSelected && !aiPickMode && "cms-selected",
+        editable && !resizable && targetClass
       )}
       style={resizable ? undefined : (styles as React.CSSProperties)}
-      contentEditable={editable}
+      contentEditable={editable && !aiPickMode}
       suppressContentEditableWarning
       onBlur={handleBlur}
       onClick={resizable ? undefined : handleClick}

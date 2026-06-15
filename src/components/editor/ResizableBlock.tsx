@@ -1,4 +1,5 @@
 import { useEditor } from "@/cms/context/EditorContext";
+import { useEditorTarget } from "@/cms/hooks/useEditorTarget";
 import { cn } from "@/lib/utils";
 import { useCallback, useRef, useState, type ReactNode } from "react";
 
@@ -10,6 +11,7 @@ interface ResizableBlockProps {
   children: ReactNode;
   className?: string;
   onSelect?: () => void;
+  targetLabel?: string;
 }
 
 export default function ResizableBlock({
@@ -20,6 +22,7 @@ export default function ResizableBlock({
   children,
   className,
   onSelect,
+  targetLabel,
 }: ResizableBlockProps) {
   const {
     editMode,
@@ -29,7 +32,16 @@ export default function ResizableBlock({
     getBlockStyles,
     updateBlockStyles,
     deviceMode,
+    aiPickMode,
   } = useEditor();
+
+  const { targetClass, handleTargetPointer } = useEditorTarget({
+    pageSlug,
+    sectionKey,
+    blockKey,
+    blockId,
+    label: targetLabel ?? `${sectionKey} / ${blockKey}`,
+  });
 
   const ref = useRef<HTMLDivElement>(null);
   const styles = getBlockStyles(pageSlug, sectionKey, blockKey);
@@ -37,16 +49,18 @@ export default function ResizableBlock({
     selection?.blockKey === blockKey &&
     selection?.sectionKey === sectionKey &&
     selection?.pageSlug === pageSlug;
-  const showHandles = editMode && isAdmin && isSelected;
+  const showHandles = editMode && isAdmin && isSelected && !aiPickMode;
 
   const handleSelect = (e: React.MouseEvent) => {
     if (!editMode || !isAdmin) return;
+    if (handleTargetPointer(e)) return;
     e.stopPropagation();
     setSelection({
       pageSlug,
       sectionKey,
       blockKey,
       blockId: blockId ?? blockKey,
+      targetType: "block",
     });
     onSelect?.();
   };
@@ -93,7 +107,8 @@ export default function ResizableBlock({
       className={cn(
         "cms-resizable",
         editMode && isAdmin && "cms-editable",
-        isSelected && "cms-selected",
+        isSelected && !aiPickMode && "cms-selected",
+        targetClass,
         className
       )}
       style={styles as React.CSSProperties}

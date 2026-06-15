@@ -74,4 +74,8 @@ export interface EditorSelection {
   pageSlug: string;
   sectionKey: string;
   blockKey: string;
+  sectionId?: string;
+  targetType?: "block" | "section";
+  label?: string;
+  meta?: Record<string, unknown>;
 }

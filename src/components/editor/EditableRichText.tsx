@@ -26,13 +26,14 @@ export default function EditableRichText({
     isAdmin,
     updateBlockValue,
     selection,
+    aiPickMode,
   } = useEditor();
 
   const page = site?.pages.find((p) => p.slug === pageSlug);
   const section = page?.sections.find((s) => s.sectionKey === sectionKey);
   const block = section?.blocks.find((b) => b.blockKey === blockKey);
   const html = String(block?.value?.html ?? fallback);
-  const editable = editMode && isAdmin;
+  const editable = editMode && isAdmin && !aiPickMode;
 
   const editor = useTiptapEditor({
     extensions: [StarterKit],
@@ -66,7 +67,7 @@ export default function EditableRichText({
       sectionKey={sectionKey}
       blockKey={blockKey}
       blockId={block?.id}
-      className={cn("cms-rich-text-wrap", isSelected && "cms-rich-text-wrap--selected")}
+      className={cn("cms-rich-text-wrap", isSelected && !aiPickMode && "cms-rich-text-wrap--selected")}
     >
       <EditorContent
         editor={editor}

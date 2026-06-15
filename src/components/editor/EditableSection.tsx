@@ -15,6 +15,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useEditor } from "@/cms/context/EditorContext";
+import { useEditorTarget } from "@/cms/hooks/useEditorTarget";
 import { cn } from "@/lib/utils";
 import { GripVertical } from "lucide-react";
 
@@ -34,6 +35,13 @@ function SortableSection({
   className,
 }: EditableSectionProps) {
   const { editMode, isAdmin } = useEditor();
+  const { targetClass, handleTargetPointer } = useEditorTarget({
+    pageSlug,
+    sectionKey,
+    sectionId,
+    targetType: "section",
+    label: `${pageSlug} / ${sectionKey} section`,
+  });
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: sectionId, disabled: !editMode || !isAdmin });
 
@@ -49,9 +57,11 @@ function SortableSection({
       className={cn(
         className,
         editMode && isAdmin && "cms-editable-section",
-        isDragging && "cms-dragging"
+        isDragging && "cms-dragging",
+        targetClass
       )}
       data-section-key={sectionKey}
+      onClick={(e) => handleTargetPointer(e)}
     >
       {editMode && isAdmin && (
         <button

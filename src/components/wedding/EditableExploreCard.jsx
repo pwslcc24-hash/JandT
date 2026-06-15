@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEditor } from "@/cms/context/EditorContext";
+import { useEditorTarget } from "@/cms/hooks/useEditorTarget";
 import { uploadMedia } from "@/cms/api/content";
 import { mediaKindFromFile } from "@/cms/mediaTypes";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,15 @@ export default function EditableExploreCard({ item, index }) {
   const [uploading, setUploading] = useState(false);
   const editable = editMode && isAdmin;
   const hasMedia = Boolean(item.mediaUrl);
+
+  const { targetClass, handleTargetPointer, aiPickMode } = useEditorTarget({
+    pageSlug: "home",
+    sectionKey: "explore",
+    blockKey: "explore-cards",
+    blockId: `explore-card-${index}`,
+    label: `Explore card: ${item.label}`,
+    meta: { cardIndex: index, cardSlug: item.slug, cardLabel: item.label },
+  });
 
   const updateCardMedia = useCallback(
     (patch) => {
@@ -45,7 +55,8 @@ export default function EditableExploreCard({ item, index }) {
   };
 
   const openPicker = (e) => {
-    if (!editable) return;
+    if (handleTargetPointer(e)) return;
+    if (!editable || aiPickMode) return;
     e.preventDefault();
     e.stopPropagation();
     inputRef.current?.click();
@@ -128,7 +139,12 @@ export default function EditableExploreCard({ item, index }) {
       }}
     >
       {editable ? (
-        <div className={cn("card", "card--editable", hasMedia && "card--has-media")}>{cardInner}</div>
+        <div
+          className={cn("card", "card--editable", hasMedia && "card--has-media", targetClass)}
+          onClick={(e) => handleTargetPointer(e)}
+        >
+          {cardInner}
+        </div>
       ) : (
         <Link to={`/${item.slug}`} className={cn("card", hasMedia && "card--has-media")}>
           {cardInner}
