@@ -10,6 +10,7 @@ import {
   PencilOff,
   Lock,
   Sparkles,
+  CloudUpload,
 } from "lucide-react";
 
 export default function EditorToolbar() {
@@ -20,6 +21,9 @@ export default function EditorToolbar() {
     deviceMode,
     setDeviceMode,
     saveStatus,
+    publishStatus,
+    publishError,
+    publishSite,
     undo,
     redo,
     canUndo,
@@ -57,6 +61,26 @@ export default function EditorToolbar() {
 
           <button
             type="button"
+            className={cn(
+              "editor-toolbar-btn editor-toolbar-btn--save-live",
+              publishStatus === "published" && "active"
+            )}
+            disabled={publishStatus === "publishing"}
+            onClick={() => publishSite()}
+            title="Save changes live for all visitors"
+          >
+            <CloudUpload size={16} />
+            {publishStatus === "publishing"
+              ? "Saving live…"
+              : publishStatus === "published"
+                ? "Saved live!"
+                : "Save Live"}
+          </button>
+
+          <div className="editor-toolbar-divider" />
+
+          <button
+            type="button"
             className={cn("editor-toolbar-btn", aiPanelOpen && "active")}
             onClick={() => setAiPanelOpen(!aiPanelOpen)}
             title="AI Editor"
@@ -84,9 +108,12 @@ export default function EditorToolbar() {
       )}
 
       <span className="editor-save-status">
-        {saveStatus === "saving" && "Saving…"}
-        {saveStatus === "saved" && "Saved"}
-        {saveStatus === "error" && "Save failed"}
+        {publishStatus === "publishing" && "Publishing…"}
+        {publishStatus === "published" && "Live!"}
+        {publishStatus === "error" && (publishError || "Publish failed")}
+        {publishStatus === "idle" && saveStatus === "saving" && "Draft saving…"}
+        {publishStatus === "idle" && saveStatus === "saved" && "Draft saved"}
+        {publishStatus === "idle" && saveStatus === "error" && "Draft save failed"}
       </span>
 
       <button

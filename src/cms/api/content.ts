@@ -1,12 +1,16 @@
 import { getSupabase, isSupabaseConfigured, STORAGE_BUCKET } from "../supabase/client";
 import type { SiteDocument, MediaAsset } from "../types";
 import { createDefaultSiteDocument } from "../seed/defaultSite";
+import { loadPublishedSiteDocument } from "./publish";
 import imageCompression from "browser-image-compression";
 
 const LOCAL_KEY = "cms_site_document";
 const CLIENT_SLUG = import.meta.env.VITE_CLIENT_SLUG || "holdsworth";
 
 export async function loadSiteDocument(): Promise<SiteDocument> {
+  const published = await loadPublishedSiteDocument();
+  if (published) return published;
+
   if (isSupabaseConfigured) {
     const doc = await loadFromSupabase();
     if (doc) return doc;
@@ -102,7 +106,7 @@ function loadFromLocal(): SiteDocument {
 }
 
 /** Merge missing pages/sections/blocks from defaults into stored doc */
-function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument): SiteDocument {
+export function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument): SiteDocument {
   const mergedPages = stored.pages.map((page) => {
     const defaultPage = defaults.pages.find((p) => p.slug === page.slug);
     if (!defaultPage) return page;
@@ -133,12 +137,26 @@ function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument): SiteDo
   return { ...stored, pages: mergedPages };
 }
 
-export async function saveSiteDocument(doc: SiteDocument): Promise<void> {
+export async function saveLocalDraft(doc: SiteDocument): Promise<void> {
+  doc.updatedAt = new Date().toISOString();
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(doc));
+}
+
+export async function publishSiteDocument(doc: SiteDocument): Promise<void> {
   doc.updatedAt = new Date().toISOString();
   localStorage.setItem(LOCAL_KEY, JSON.stringify(doc));
 
-  if (!isSupabaseConfigured) return;
-  await saveToSupabase(doc);
+  const { publishSiteToBase44 } = await import("./publish");
+  await publishSiteToBase44(doc);
+
+  if (isSupabaseConfigured) {
+    await saveToSupabase(doc);
+  }
+}
+
+/** @deprecated Use saveLocalDraft for autosave or publishSiteDocument for live saves */
+export async function saveSiteDocument(doc: SiteDocument): Promise<void> {
+  await saveLocalDraft(doc);
 }
 
 async function saveToSupabase(doc: SiteDocument): Promise<void> {

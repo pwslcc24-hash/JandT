@@ -1,0 +1,22 @@
+{
+  "name": "SiteContent",
+  "type": "object",
+  "properties": {
+    "clientSlug": {
+      "type": "string",
+      "description": "Unique site identifier, e.g. holdsworth"
+    },
+    "document": {
+      "type": "object",
+      "description": "Full CMS site document JSON"
+    },
+    "updatedAt": {
+      "type": "string",
+      "description": "ISO timestamp of last publish"
+    }
+  },
+  "required": [
+    "clientSlug",
+    "document"
+  ]
+}

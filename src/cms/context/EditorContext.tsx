@@ -14,9 +14,10 @@ import type {
   EditorSelection,
   ElementStyles,
   SaveStatus,
+  PublishStatus,
   SiteDocument,
 } from "../types";
-import { loadSiteDocument, saveSiteDocument } from "../api/content";
+import { loadSiteDocument, saveLocalDraft, publishSiteDocument } from "../api/content";
 import { applyAiOperations } from "../ai/applyOperations";
 import type { AiOperation } from "../ai/types";
 import {
@@ -43,6 +44,9 @@ interface EditorContextValue {
   setDeviceMode: (d: DeviceMode) => void;
   site: SiteDocument | null;
   saveStatus: SaveStatus;
+  publishStatus: PublishStatus;
+  publishError: string;
+  publishSite: () => Promise<void>;
   selection: EditorSelection | null;
   setSelection: (s: EditorSelection | null) => void;
   login: (email: string, password: string) => Promise<void>;
@@ -94,6 +98,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [deviceMode, setDeviceMode] = useState<DeviceMode>("desktop");
   const [site, setSite] = useState<SiteDocument | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [publishStatus, setPublishStatus] = useState<PublishStatus>("idle");
+  const [publishError, setPublishError] = useState("");
   const [selection, setSelection] = useState<EditorSelection | null>(null);
   const [aiPanelOpen, setAiPanelOpenState] = useState(false);
   const [aiPickMode, setAiPickMode] = useState(false);
@@ -147,7 +153,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setSaveStatus("saving");
     saveTimerRef.current = setTimeout(async () => {
       try {
-        await saveSiteDocument(site);
+        await saveLocalDraft(site);
         setSaveStatus("saved");
         setTimeout(() => setSaveStatus("idle"), 2000);
       } catch {
@@ -290,6 +296,20 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [pushHistory]
   );
 
+  const publishSite = useCallback(async () => {
+    if (!site) return;
+    setPublishStatus("publishing");
+    setPublishError("");
+    try {
+      await publishSiteDocument(site);
+      setPublishStatus("published");
+      setTimeout(() => setPublishStatus("idle"), 3000);
+    } catch (err) {
+      setPublishStatus("error");
+      setPublishError(err instanceof Error ? err.message : "Failed to save live");
+    }
+  }, [site]);
+
   const value = useMemo(
     () => ({
       user,
@@ -301,6 +321,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       setDeviceMode,
       site,
       saveStatus,
+      publishStatus,
+      publishError,
+      publishSite,
       selection,
       setSelection,
       login,
@@ -321,6 +344,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       aiPickMode,
       setAiPickMode,
       selectTarget,
+      publishSite,
       applyAiEdits,
     }),
     [
@@ -330,6 +354,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       deviceMode,
       site,
       saveStatus,
+      publishStatus,
+      publishError,
       selection,
       aiPanelOpen,
       aiPickMode,
@@ -342,6 +368,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       getBlockStyles,
       setAiPanelOpen,
       selectTarget,
+      publishSite,
       applyAiEdits,
       historyTick,
     ]

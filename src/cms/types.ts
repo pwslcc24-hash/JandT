@@ -1,6 +1,7 @@
 export type UserRole = "admin" | "viewer";
 export type DeviceMode = "desktop" | "tablet" | "mobile";
 export type SaveStatus = "idle" | "saving" | "saved" | "error";
+export type PublishStatus = "idle" | "publishing" | "published" | "error";
 export type BlockType = "text" | "rich_text" | "image" | "json";
 
 export interface ElementStyles {
