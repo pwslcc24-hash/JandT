@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEditor } from "@/cms/context/EditorContext";
 import { cn } from "@/lib/utils";
 import {
@@ -11,6 +12,7 @@ import {
   Lock,
   Sparkles,
   CloudUpload,
+  Layout,
 } from "lucide-react";
 
 export default function EditorToolbar() {
@@ -88,6 +90,17 @@ export default function EditorToolbar() {
             <Sparkles size={16} />
             AI Edit
           </button>
+
+          <Link
+            to="/builder?page=custom"
+            className="editor-toolbar-btn"
+            title="Page Builder"
+          >
+            <Layout size={16} />
+            Builder
+          </Link>
+
+          <div className="editor-toolbar-divider" />
 
           <div className="editor-device-group">
             {(["desktop", "tablet", "mobile"] as const).map((d) => (

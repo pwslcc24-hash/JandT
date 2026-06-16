@@ -28,6 +28,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s, transform 0.2s;
+  text-decoration: none;
 }
 
 .editor-toolbar-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.15); }

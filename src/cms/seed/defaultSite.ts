@@ -52,7 +52,7 @@ export function createDefaultSiteDocument(): SiteDocument {
                   { slug: "info", label: "Info", icon: "calendar" },
                   { slug: "story", label: "Our story", icon: "heart" },
                   { slug: "photos", label: "Photos", icon: "photo" },
-                  { slug: "registry", label: "Registry", icon: "gift" },
+                  { slug: "registry", label: "Venmo/ Registry", icon: "gift" },
                 ],
               }),
             ],

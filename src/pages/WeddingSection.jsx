@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { getNavBySlug } from "@/config/wedding";
 import PageChrome from "@/components/wedding/PageChrome";
 import PhotoAlbumList from "@/components/wedding/PhotoAlbumList";
+import WeddingAgenda from "@/components/wedding/WeddingAgenda";
 import EditableText from "@/components/editor/EditableText";
 import EditableRichText from "@/components/editor/EditableRichText";
 import EditableMediaStack from "@/components/editor/EditableMediaStack";
@@ -47,13 +48,17 @@ export default function WeddingSection() {
               className="section-title"
               as="h1"
             />
-            <EditableRichText
-              pageSlug={slug}
-              sectionKey="content"
-              blockKey="body"
-              fallback={pageContent.bodyHtml}
-              className="section-body-rich"
-            />
+            {slug === "info" ? (
+              <WeddingAgenda />
+            ) : (
+              <EditableRichText
+                pageSlug={slug}
+                sectionKey="content"
+                blockKey="body"
+                fallback={pageContent.bodyHtml}
+                className="section-body-rich"
+              />
+            )}
             <EditableMediaStack pageSlug={slug} />
           </>
         )}

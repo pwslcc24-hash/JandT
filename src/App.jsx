@@ -4,6 +4,7 @@ import EditorShell from "@/components/editor/EditorShell";
 import WeddingLanding from "@/pages/WeddingLanding";
 import WeddingSection from "@/pages/WeddingSection";
 import WeddingGallery from "@/pages/WeddingGallery";
+import PageBuilder from "@/pages/PageBuilder";
 import StudioUnlockPage from "@/pages/StudioUnlockPage";
 import AdminLayout from "@/pages/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -39,6 +40,7 @@ function App() {
             <Route path="analytics" element={<AdminAnalytics />} />
           </Route>
           <Route element={<PublicLayout />}>
+            <Route path="/builder" element={<PageBuilder />} />
             <Route path="/" element={<WeddingLanding />} />
             <Route path="/photos/:album" element={<WeddingGallery />} />
             <Route path="/:slug" element={<WeddingSection />} />
