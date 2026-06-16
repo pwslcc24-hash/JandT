@@ -18,21 +18,33 @@ export function isBase44PublishAvailable(): boolean {
   return Boolean(appParams.appId);
 }
 
+function unwrapRecords(result: unknown): SiteContentRecord[] {
+  if (Array.isArray(result)) return result as SiteContentRecord[];
+  if (result && typeof result === "object") {
+    const obj = result as Record<string, unknown>;
+    if (Array.isArray(obj.data)) return obj.data as SiteContentRecord[];
+    if (Array.isArray(obj.items)) return obj.items as SiteContentRecord[];
+  }
+  return [];
+}
+
 export async function loadPublishedSiteDocument(): Promise<SiteDocument | null> {
   if (!isBase44PublishAvailable()) return null;
 
   try {
-    const records = (await base44.entities.SiteContent.filter(
+    const result = await base44.entities.SiteContent.filter(
       { clientSlug: CLIENT_SLUG },
       "-updatedAt",
       1
-    )) as SiteContentRecord[];
+    );
 
-    const record = records?.[0];
+    const records = unwrapRecords(result);
+    const record = records[0];
     if (!record?.document) return null;
 
     return mergeSiteDocument(cloneSiteDocument(record.document), createDefaultSiteDocument());
-  } catch {
+  } catch (err) {
+    console.warn("[CMS] Failed to load published site from Base44:", err);
     return null;
   }
 }
@@ -49,14 +61,22 @@ export async function publishSiteToBase44(doc: SiteDocument): Promise<void> {
   };
 
   try {
-    const existing = (await base44.entities.SiteContent.filter(
+    const existingResult = await base44.entities.SiteContent.filter(
       { clientSlug: payload.clientSlug },
       "-updatedAt",
-      1
-    )) as SiteContentRecord[];
+      10
+    );
+    const existing = unwrapRecords(existingResult);
 
-    if (existing?.[0]?.id) {
+    if (existing.length > 0) {
       await base44.entities.SiteContent.update(existing[0].id, payload);
+      for (let i = 1; i < existing.length; i++) {
+        try {
+          await base44.entities.SiteContent.delete(existing[i].id);
+        } catch {
+          /* best effort */
+        }
+      }
       return;
     }
 

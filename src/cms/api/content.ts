@@ -11,32 +11,77 @@ import { isBase44PublishAvailable } from "./publish";
 import { cloneSiteDocument, touchSiteDocument } from "../utils/immutable";
 import imageCompression from "browser-image-compression";
 
-const LOCAL_KEY = "cms_site_document";
+const LOCAL_DRAFT_KEY = "cms_site_draft";
+const LOCAL_PUBLISHED_KEY = "cms_site_published";
+const PUBLISHED_AT_KEY = "cms_published_at";
+const LEGACY_LOCAL_KEY = "cms_site_document";
 const CLIENT_SLUG = import.meta.env.VITE_CLIENT_SLUG || "holdsworth";
 
-export async function loadSiteDocument(): Promise<SiteDocument> {
-  const defaults = createDefaultSiteDocument();
-  const local = mergeSiteDocument(readLocalSiteDocument() ?? defaults, defaults);
-
-  let remote: SiteDocument | null = null;
-  if (isSupabaseConfigured) {
-    remote = await loadFromSupabase();
-  }
-  if (!remote) {
-    remote = await loadPublishedSiteDocument();
-  }
-
-  if (!remote) return cloneSiteDocument(local);
-
-  const localTs = Date.parse(local.updatedAt || "0");
-  const remoteTs = Date.parse(remote.updatedAt || "0");
-  const winner = localTs >= remoteTs ? local : remote;
-  return cloneSiteDocument(mergeSiteDocument(winner, defaults));
+export interface LoadSiteOptions {
+  preferDraft?: boolean;
 }
 
-function readLocalSiteDocument(): SiteDocument | null {
+export async function loadSiteDocument(options: LoadSiteOptions = {}): Promise<SiteDocument> {
+  const defaults = createDefaultSiteDocument();
+  migrateLegacyLocalStorage();
+
+  const published = await loadPublishedSource();
+  const draft = readLocalDraft();
+  const publishedCached = readLocalPublished();
+  const remotePublished = published ?? publishedCached;
+
+  if (options.preferDraft && draft) {
+    return cloneSiteDocument(mergeSiteDocument(draft, defaults));
+  }
+
+  if (remotePublished) {
+    return cloneSiteDocument(mergeSiteDocument(remotePublished, defaults));
+  }
+
+  if (draft) {
+    return cloneSiteDocument(mergeSiteDocument(draft, defaults));
+  }
+
+  return cloneSiteDocument(defaults);
+}
+
+async function loadPublishedSource(): Promise<SiteDocument | null> {
+  if (isSupabaseConfigured) {
+    const fromDb = await loadFromSupabase();
+    if (fromDb) return fromDb;
+  }
+  return loadPublishedSiteDocument();
+}
+
+function migrateLegacyLocalStorage(): void {
   try {
-    const raw = localStorage.getItem(LOCAL_KEY);
+    if (localStorage.getItem(LOCAL_DRAFT_KEY) || localStorage.getItem(LOCAL_PUBLISHED_KEY)) {
+      return;
+    }
+    const legacy = localStorage.getItem(LEGACY_LOCAL_KEY);
+    if (!legacy) return;
+    if (localStorage.getItem(PUBLISHED_AT_KEY)) {
+      localStorage.setItem(LOCAL_PUBLISHED_KEY, legacy);
+    } else {
+      localStorage.setItem(LOCAL_DRAFT_KEY, legacy);
+    }
+    localStorage.removeItem(LEGACY_LOCAL_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+function readLocalDraft(): SiteDocument | null {
+  return readJsonKey(LOCAL_DRAFT_KEY);
+}
+
+function readLocalPublished(): SiteDocument | null {
+  return readJsonKey(LOCAL_PUBLISHED_KEY);
+}
+
+function readJsonKey(key: string): SiteDocument | null {
+  try {
+    const raw = localStorage.getItem(key);
     if (!raw) return null;
     return JSON.parse(raw) as SiteDocument;
   } catch {
@@ -116,16 +161,6 @@ function mapBlock(b: Record<string, unknown>) {
   };
 }
 
-function loadFromLocal(): SiteDocument {
-  const defaults = createDefaultSiteDocument();
-  const stored = readLocalSiteDocument();
-  if (stored) {
-    return mergeSiteDocument(stored, defaults);
-  }
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(defaults));
-  return defaults;
-}
-
 /** Merge missing pages/sections/blocks from defaults into stored doc */
 export function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument): SiteDocument {
   const base = cloneSiteDocument(stored);
@@ -162,7 +197,7 @@ export function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument):
 export async function saveLocalDraft(doc: SiteDocument): Promise<void> {
   let snapshot = touchSiteDocument(doc);
   try {
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
+    localStorage.setItem(LOCAL_DRAFT_KEY, JSON.stringify(snapshot));
     return;
   } catch {
     if (!isBase44PublishAvailable() || !documentHasInlineMedia(snapshot)) {
@@ -173,7 +208,7 @@ export async function saveLocalDraft(doc: SiteDocument): Promise<void> {
   }
 
   snapshot = touchSiteDocument(await externalizeInlineMedia(snapshot));
-  localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
+  localStorage.setItem(LOCAL_DRAFT_KEY, JSON.stringify(snapshot));
 }
 
 export async function publishSiteDocument(doc: SiteDocument): Promise<SiteDocument> {
@@ -183,17 +218,20 @@ export async function publishSiteDocument(doc: SiteDocument): Promise<SiteDocume
   }
 
   const snapshot = touchSiteDocument(working);
-  try {
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(snapshot));
-  } catch {
-    // Local draft may exceed browser quota; live publish still proceeds.
-  }
 
   const { publishSiteToBase44 } = await import("./publish");
   await publishSiteToBase44(snapshot);
 
   if (isSupabaseConfigured) {
     await saveToSupabase(snapshot);
+  }
+
+  try {
+    localStorage.setItem(LOCAL_PUBLISHED_KEY, JSON.stringify(snapshot));
+    localStorage.setItem(PUBLISHED_AT_KEY, snapshot.updatedAt);
+    localStorage.removeItem(LOCAL_DRAFT_KEY);
+  } catch {
+    // Published remotely even if local cache fails.
   }
 
   return snapshot;

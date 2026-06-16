@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { wedding } from "@/config/wedding";
+import { useSiteContent } from "@/cms/hooks/useSiteContent";
 import { WeddingIcon } from "./icons";
 
 const itemMotion = {
@@ -19,7 +20,7 @@ const itemMotion = {
 
 export default function SideMenu({ open, onClose, className = "", fixed = false }) {
   const navigate = useNavigate();
-  const { couple, nav } = wedding;
+  const { couple, nav } = useSiteContent();
 
   const goTo = (slug) => {
     onClose();

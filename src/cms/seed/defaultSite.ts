@@ -1,4 +1,5 @@
-import type { SiteDocument } from "./types";
+import type { SiteDocument } from "../types";
+import { DEFAULT_AGENDA_HTML } from "./agendaHtml";
 
 /** Default site content — seeded to DB / localStorage on first load */
 export function createDefaultSiteDocument(): SiteDocument {
@@ -103,12 +104,7 @@ export function createDefaultSiteDocument(): SiteDocument {
           },
         ],
       },
-      pageContent("info", "Wedding Info", [
-        "Ceremony — 4:00 PM · St. Mary's Chapel",
-        "Reception — 6:00 PM · The Grand Estate",
-        "Dress code — Cocktail attire",
-        "RSVP by July 1, 2026",
-      ]),
+      pageContent("info", "Wedding Info", { html: DEFAULT_AGENDA_HTML }),
       pageContent("story", "Our Story", [
         "We met on a rainy afternoon in a tiny coffee shop. A shared umbrella and a long conversation later, something special had begun.",
         "Five years later, we're ready to say yes to forever — and we can't wait to celebrate with you.",
@@ -121,8 +117,14 @@ export function createDefaultSiteDocument(): SiteDocument {
   };
 }
 
-function pageContent(slug: string, title: string, paragraphs: string[]) {
-  const html = paragraphs.map((p) => `<p>${p}</p>`).join("");
+function pageContent(
+  slug: string,
+  title: string,
+  body: string[] | { html: string }
+) {
+  const html = Array.isArray(body)
+    ? body.map((p) => `<p>${p}</p>`).join("")
+    : body.html;
   const sections: SiteDocument["pages"][0]["sections"] = [
     {
       id: `sec-${slug}-content`,

@@ -50,7 +50,7 @@ export const wedding = {
     },
     {
       slug: "registry",
-      label: "Venmo/ Registry",
+    label: "Venmo/ Registry",
       icon: "gift",
       title: "Registry",
       body: [

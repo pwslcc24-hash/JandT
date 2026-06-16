@@ -121,8 +121,16 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
-    Promise.all([getSessionUser(), loadSiteDocument()]).then(([u, doc]) => {
-      const initial = cloneSiteDocument(doc);
+    Promise.all([getSessionUser(), loadSiteDocument()]).then(async ([u, doc]) => {
+      let initial = cloneSiteDocument(doc);
+      if (u?.role === "admin") {
+        const draftDoc = await loadSiteDocument({ preferDraft: true });
+        const publishedTs = Date.parse(doc.updatedAt || "0");
+        const draftTs = Date.parse(draftDoc.updatedAt || "0");
+        if (draftTs > publishedTs) {
+          initial = cloneSiteDocument(draftDoc);
+        }
+      }
       setUser(u);
       setSite(initial);
       historyRef.current = [initial];
