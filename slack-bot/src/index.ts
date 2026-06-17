@@ -1,6 +1,7 @@
 import { App } from "@slack/bolt";
 import { config } from "./config.js";
 import { formatCursorError, runSiteEdit } from "./cursor.js";
+import { looksLikeEditRequest, stripBotMention } from "./message-utils.js";
 
 const app = new App({
   token: config.slackBotToken,
@@ -9,14 +10,28 @@ const app = new App({
   socketMode: true,
 });
 
-const busyChannels = new Set<string>();
+const busyThreads = new Set<string>();
+let editChannelId = process.env.SLACK_EDIT_CHANNEL_ID?.trim() ?? "";
+
+async function resolveEditChannelId(): Promise<string> {
+  if (editChannelId) return editChannelId;
+
+  const res = await app.client.conversations.list({
+    types: "public_channel",
+    limit: 200,
+  });
+  const match = res.channels?.find((ch) => ch.name === config.editChannelName);
+  if (!match?.id) {
+    throw new Error(
+      `Channel #${config.editChannelName} not found. Run: npm run provision`
+    );
+  }
+  editChannelId = match.id;
+  return editChannelId;
+}
 
 function isAllowed(userId: string | undefined): boolean {
   return Boolean(userId && config.allowedUserIds.has(userId));
-}
-
-function stripBotMention(text: string): string {
-  return text.replace(/<@[A-Z0-9]+>/g, "").trim();
 }
 
 async function handleEditRequest({
@@ -33,28 +48,30 @@ async function handleEditRequest({
   say: (args: { text: string; thread_ts?: string }) => Promise<unknown>;
 }) {
   const request = stripBotMention(text);
-  if (!request) {
-    await say({
-      text: "Tell me what to change, e.g. _“Make the hero countdown say days until forever”_",
-      thread_ts: threadTs,
-    });
+  if (!looksLikeEditRequest(request)) {
+    if (!threadTs) {
+      await say({
+        text: "Post a site change here, e.g. _Make the hero countdown say days until forever_",
+        thread_ts: threadTs,
+      });
+    }
     return;
   }
 
   const lockKey = `${channel}:${threadTs ?? "root"}`;
-  if (busyChannels.has(lockKey)) {
+  if (busyThreads.has(lockKey)) {
     await say({
-      text: "Still working on the previous edit in this thread. I'll reply when it's done.",
+      text: "Still working on the previous edit in this thread.",
       thread_ts: threadTs,
     });
     return;
   }
 
-  busyChannels.add(lockKey);
-
+  busyThreads.add(lockKey);
   const replyTs = threadTs;
+
   await say({
-    text: `On it — running a Cursor agent on \`${config.githubRepoUrl}\`…`,
+    text: `On it — editing \`${config.githubRepoUrl}\` with Porter's Cursor…`,
     thread_ts: replyTs,
   });
 
@@ -68,111 +85,61 @@ async function handleEditRequest({
   try {
     const result = await runSiteEdit(request, userId, progress);
 
-    const lines = [
-      "Done.",
-      `Agent: \`${result.agentId}\``,
-      `Run: \`${result.runId}\``,
-    ];
-
+    const lines = ["✅ Done."];
     if (result.prUrl) {
       lines.push(`PR: ${result.prUrl}`);
-    } else if (config.gitMode === "main") {
+    } else {
       lines.push(`Pushed to \`${config.githubBranch}\` on GitHub.`);
-      lines.push("Publish on Base44.com to update the live site.");
-    } else if (result.branch) {
-      lines.push(`Branch: \`${result.branch}\``);
+      lines.push("_Publish on Base44.com to update the live site._");
     }
-
     lines.push("", result.summary);
 
     await say({ text: lines.join("\n"), thread_ts: replyTs });
   } catch (err) {
     await say({
-      text: `Failed: ${formatCursorError(err)}`,
+      text: `❌ Failed: ${formatCursorError(err)}`,
       thread_ts: replyTs,
     });
   } finally {
-    busyChannels.delete(lockKey);
+    busyThreads.delete(lockKey);
   }
 }
 
-app.event("app_mention", async ({ event, say }) => {
-  if (!event.user || !isAllowed(event.user)) {
-    await say({
-      text: "You're not authorized to run site edits.",
-      thread_ts: event.ts,
-    });
-    return;
-  }
-
-  await handleEditRequest({
-    userId: event.user,
-    channel: event.channel,
-    threadTs: event.ts,
-    text: event.text,
-    say,
-  });
-});
-
 app.message(async ({ message, say }) => {
   if (message.subtype || !("user" in message) || !message.user) return;
-  if (message.channel_type !== "im") return;
-  if (!isAllowed(message.user)) {
-    await say({ text: "You're not authorized to run site edits." });
-    return;
-  }
+  if ("bot_id" in message && message.bot_id) return;
 
-  const text = "text" in message ? message.text ?? "" : "";
-  await handleEditRequest({
-    userId: message.user,
-    channel: message.channel,
-    threadTs: "thread_ts" in message ? message.thread_ts : undefined,
-    text,
-    say,
-  });
-});
+  const channelId = await resolveEditChannelId();
 
-app.command("/site-edit", async ({ command, ack }) => {
-  await ack();
+  if (message.channel === channelId) {
+    if (!isAllowed(message.user)) return;
 
-  if (!isAllowed(command.user_id)) {
-    await app.client.chat.postEphemeral({
-      channel: command.channel_id,
-      user: command.user_id,
-      text: "You're not authorized to run site edits.",
+    const text = "text" in message ? message.text ?? "" : "";
+    await handleEditRequest({
+      userId: message.user,
+      channel: message.channel,
+      threadTs: "thread_ts" in message ? message.thread_ts : undefined,
+      text,
+      say,
     });
     return;
   }
 
-  const request = command.text.trim();
-  if (!request) {
-    await app.client.chat.postEphemeral({
-      channel: command.channel_id,
-      user: command.user_id,
-      text: "Usage: `/site-edit Make the banner text larger`",
+  if (message.channel_type === "im" && isAllowed(message.user)) {
+    const text = "text" in message ? message.text ?? "" : "";
+    await handleEditRequest({
+      userId: message.user,
+      channel: message.channel,
+      threadTs: "thread_ts" in message ? message.thread_ts : undefined,
+      text,
+      say,
     });
-    return;
   }
-
-  await app.client.chat.postMessage({
-    channel: command.channel_id,
-    text: `Starting edit: _${request}_`,
-  });
-
-  await handleEditRequest({
-    userId: command.user_id,
-    channel: command.channel_id,
-    text: request,
-    say: async ({ text, thread_ts }) => {
-      await app.client.chat.postMessage({
-        channel: command.channel_id,
-        thread_ts,
-        text,
-      });
-    },
-  });
 });
 
+const channelId = await resolveEditChannelId();
 await app.start();
-console.log("JandT Slack bot is running (Socket Mode).");
+
+console.log(`JandT site bot running on #${config.editChannelName} (${channelId})`);
 console.log(`Repo: ${config.githubRepoUrl} → ${config.gitMode === "main" ? config.githubBranch : "PR"}`);
+console.log(`Allowed users: ${[...config.allowedUserIds].join(", ")}`);

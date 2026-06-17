@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "edit": "tsx src/edit-cli.ts",
+    "provision": "tsx src/provision-slack.ts",
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit"
