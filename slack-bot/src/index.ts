@@ -140,6 +140,15 @@ app.message(async ({ message, say }) => {
 const channelId = await resolveEditChannelId();
 await app.start();
 
+async function shutdown(signal: string) {
+  console.log(`Shutting down (${signal})…`);
+  await app.stop();
+  process.exit(0);
+}
+
+process.on("SIGTERM", () => void shutdown("SIGTERM"));
+process.on("SIGINT", () => void shutdown("SIGINT"));
+
 console.log(`JandT site bot running on #${config.editChannelName} (${channelId})`);
 console.log(`Repo: ${config.githubRepoUrl} → ${config.gitMode === "main" ? config.githubBranch : "PR"}`);
 console.log(`Allowed users: ${[...config.allowedUserIds].join(", ")}`);

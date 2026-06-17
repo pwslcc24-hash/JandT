@@ -32,4 +32,5 @@ dist-ssr
 
 # Slack bot
 slack-bot/node_modules
+slack-bot/dist
 slack-bot/.env
