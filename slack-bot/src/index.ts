@@ -17,7 +17,7 @@ async function resolveEditChannelId(): Promise<string> {
   if (editChannelId) return editChannelId;
 
   const res = await app.client.conversations.list({
-    types: "public_channel",
+    types: "public_channel,private_channel",
     limit: 200,
   });
   const match = res.channels?.find((ch) => ch.name === config.editChannelName);

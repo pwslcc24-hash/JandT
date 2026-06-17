@@ -18,10 +18,14 @@ Jay posts suggestions in `#jandt-edits`. Your bot runs on **your** `CURSOR_API_K
 - `chat:write`
 - `users:read`
 - `users:read.email`
+- `groups:history` ← **required for private channels**
+- `groups:read`
+- `groups:write`
 
 ### Events
 `Event Subscriptions` → **ON** → Bot events:
 - `message.channels`
+- `message.groups` ← **required for private channels**
 
 ### Install
 **Install App** → copy `SLACK_BOT_TOKEN` and **Signing Secret**
@@ -57,11 +61,17 @@ After Jay joins: his profile → ⋮ → **Copy member ID** → add to `ALLOWED_
 
 Run `npm run provision` again to add him to the channel.
 
-## 6. Run the bot (keep terminal open)
+## 6. Run the bot (background — no credit card)
 
 ```bash
-npm start
+./install-macos-service.sh
 ```
+
+Starts on login, restarts if it crashes. Logs: `~/Library/Logs/jandt-slack-bot/out.log`
+
+**Private channel:** In `#jandt-edits`, run `/invite @YourBotName` after adding `groups:*` scopes above.
+
+**Note:** Mac must be on and logged in (free; no Fly.io needed).
 
 ## Jay's instructions
 

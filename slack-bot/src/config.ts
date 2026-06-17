@@ -22,6 +22,7 @@ export const config = {
       .filter(Boolean)
   ),
   editChannelName: optional("SLACK_EDIT_CHANNEL", "jandt-edits").replace(/^#/, ""),
+  channelIsPrivate: optional("SLACK_CHANNEL_PRIVATE", "true") === "true",
   inviteEmail: optional("SLACK_INVITE_EMAIL", "holdsjay@gmail.com"),
   ...cursorConfig,
 };
