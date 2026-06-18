@@ -3,9 +3,13 @@ name: Publish sync
 on:
   push:
     branches: [main]
-    paths:
+      paths:
       - src/cms/seed/defaultSite.ts
+      - src/cms/seed/registryHtml.ts
+      - src/cms/seed/agendaHtml.ts
       - src/config/wedding.js
+      - src/styles/canvas-editor.css
+      - src/index.css
 
 jobs:
   sync:

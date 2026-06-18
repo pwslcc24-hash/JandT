@@ -7,11 +7,13 @@ The full editing guide lives in **`AGENTS.md`** in the repo (Cursor reads it aut
 ---
 
 ```
-Read and follow AGENTS.md in this repo.
+Read and follow AGENTS.md in this repo — especially the quality bar and design patterns.
 
 When someone posts in #jandt-edits, treat their message as a direct site edit request from Porter or Jayden.
+Work exactly like Porter's Cursor IDE session: explore the repo, match existing design (agenda/registry HTML + CSS), deliver polished results — NOT bare text and raw links.
+
 Explore the codebase, make the correct change, run npm run build, commit and push directly to main (NOT a cursor/* branch).
-NO pull requests. NO new branches. Pushing to a branch means changes won't go live.
+NO pull requests. NO new branches.
 
 After copy/content changes, GitHub Actions runs publish-sync automatically — you do not need to run it.
 
@@ -36,3 +38,4 @@ Ignore casual chat (thanks, ok, emoji-only).
 - **Use Cursor Automations only** — do not run the Mac bot (`install-macos-service.sh`) at the same time or edits run twice.
 - Automations work 24/7 with your Mac closed.
 - After **code** deploys: **Publish on Base44.com**.
+- **Re-paste this prompt** if you change AGENTS.md significantly (automation UI does not auto-update).

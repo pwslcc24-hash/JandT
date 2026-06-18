@@ -1,5 +1,6 @@
 import type { SiteDocument } from "../types";
 import { DEFAULT_AGENDA_HTML } from "./agendaHtml";
+import { DEFAULT_REGISTRY_HTML } from "./registryHtml";
 
 /** Default site content — seeded to DB / localStorage on first load */
 export function createDefaultSiteDocument(): SiteDocument {
@@ -109,11 +110,7 @@ export function createDefaultSiteDocument(): SiteDocument {
         "We met on a rainy afternoon in a tiny coffee shop. A shared umbrella and a long conversation later, something special had begun.",
         "Five years later, we're ready to say yes to forever — and we can't wait to celebrate with you.",
       ]),
-      pageContent("registry", "Registry", [
-        "Your presence is the greatest gift.",
-        '<a href="https://www.amazon.com/wedding/share/taylorjayden" target="_blank" rel="noreferrer">Our registry</a>',
-        '<a href="https://venmo.com/taylor-palmer-95" target="_blank" rel="noreferrer">Venmo: @taylor-palmer-95</a>',
-      ]),
+      pageContent("registry", "Registry", { html: DEFAULT_REGISTRY_HTML }),
     ],
   };
 }

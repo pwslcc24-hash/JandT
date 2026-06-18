@@ -53,7 +53,13 @@ export default function WeddingSection() {
               sectionKey="content"
               blockKey="body"
               fallback={slug === "info" ? DEFAULT_AGENDA_HTML : pageContent.bodyHtml}
-              className={slug === "info" ? "section-body-rich agenda-rich" : "section-body-rich"}
+              className={
+                slug === "info"
+                  ? "section-body-rich agenda-rich"
+                  : slug === "registry"
+                    ? "section-body-rich registry-rich"
+                    : "section-body-rich"
+              }
             />
             <EditableMediaStack pageSlug={slug} />
           </>

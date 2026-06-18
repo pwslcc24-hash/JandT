@@ -68,12 +68,26 @@ Pages → sections → blocks. Key slugs:
 
 ## How to work (same as Cursor IDE session)
 
+**Quality bar:** Slack requests must get the same polish Porter gets in Cursor IDE — not minimal text dumps.
+Before editing, read existing pages (especially `/info` agenda HTML in `src/cms/seed/agendaHtml.ts` and its CSS in `src/styles/canvas-editor.css`).
+Match that level: structured layout, typography, spacing, cards, hover states, elegant wedding tone.
+
+### Content vs code — choose the right layer
+
+| Request type | What to do |
+|--------------|------------|
+| Copy / links / page content | Rich HTML in `defaultSite.ts` (or dedicated `*Html.ts` seed file) + CSS classes — **never** bare `<p>` + plain `<a>` lists |
+| Layout / components / styling | Edit React components + `src/index.css` or `src/styles/canvas-editor.css` |
+| Both | Do both — e.g. registry cards need HTML structure **and** CSS |
+
+### Steps
+
 1. **Understand the request** — if vague, infer the most likely page/block from context.
 2. **Search the repo** — grep/read relevant files before editing. Never guess file paths.
-3. **Make the smallest correct change** — match existing patterns, naming, and tone (elegant wedding).
-4. **Content edits** — update `defaultSite.ts` pageContent for the right page slug.
-   For rich text use valid HTML in body blocks (`<p>`, `<a href="">`, `<strong>`, lists).
-   For nav/explore cards update explore-cards value JSON in defaultSite AND wedding.js nav if needed.
+3. **Design first** — ask: "Would Porter be happy with this in the IDE?" If it looks like a plain text paste, upgrade it.
+4. **Content edits** — use `{ html: ... }` for rich pages (see `agendaHtml.ts`, `registryHtml.ts`).
+   Put reusable HTML in `src/cms/seed/*Html.ts`. Add matching CSS next to agenda styles in `canvas-editor.css`.
+   For simple story-style pages, paragraphs are fine. For links, cards, lists, timelines — use structured HTML + CSS.
 5. **Code/style edits** — edit the real component/CSS, not just fallbacks.
 6. **Hero video/images** — use URL fields in hero-video block; uploads go through Base44 file URLs not data URLs.
 7. **Run `npm run build`** — fix all errors before finishing.
@@ -86,6 +100,7 @@ Pages → sections → blocks. Key slugs:
 
 ## Do NOT
 
+- Dump raw links as plain paragraphs — use card/link patterns like agenda or registry pages
 - Only edit wedding.js or defaultSite.ts and expect visitors to see copy changes without pushing to main
 - Open PRs or create cursor/* branches
 - Embed large base64 images/videos in site JSON
@@ -100,9 +115,12 @@ Casual chat: thanks, ok, lol, emoji-only, "sounds good"
 ## Examples
 
 "Add Amazon registry link and Venmo @handle on registry page"
-→ Edit defaultSite.ts registry pageContent body HTML with link + Venmo line
-→ wedding.js registry body fallback
-→ build → commit → push main → Slack reply (publish-sync runs via GitHub Actions)
+→ Read `registryHtml.ts` + `agendaHtml.ts` for design patterns
+→ Build styled card layout in `registryHtml.ts`, CSS in `canvas-editor.css`
+→ Wire in defaultSite.ts → build → push main → Slack reply
+
+"Add Amazon registry link" (WRONG approach)
+→ ❌ Three plain `<p>` tags with raw `<a>` links — too basic
 
 "Make hero countdown label say days until forever"
 → home hero section or banner blocks in defaultSite.ts
