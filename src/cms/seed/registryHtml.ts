@@ -11,10 +11,11 @@ export const DEFAULT_REGISTRY_HTML = `
       target="_blank"
       rel="noopener noreferrer"
     >
-      <span class="registry-card-eyebrow">Wish list</span>
-      <span class="registry-card-title">Amazon Registry</span>
+      <span class="registry-card-eyebrow">Our registry</span>
+      <span class="registry-card-title">Amazon Wedding Registry</span>
       <span class="registry-card-desc">Browse gifts we've picked for our new chapter together.</span>
-      <span class="registry-card-cta">View our registry →</span>
+      <span class="registry-card-meta">amazon.com/wedding/share/taylorjayden</span>
+      <span class="registry-card-cta">Open Our Registry →</span>
     </a>
 
     <a
@@ -23,10 +24,11 @@ export const DEFAULT_REGISTRY_HTML = `
       target="_blank"
       rel="noopener noreferrer"
     >
-      <span class="registry-card-eyebrow">Cash gift</span>
-      <span class="registry-card-title">Venmo</span>
+      <span class="registry-card-eyebrow">Venmo</span>
+      <span class="registry-card-title">Venmo Gift</span>
       <span class="registry-card-desc">Send a gift directly — every bit of love is appreciated.</span>
-      <span class="registry-card-cta">@taylor-palmer-95 →</span>
+      <span class="registry-card-meta">venmo.com/taylor-palmer-95</span>
+      <span class="registry-card-cta">@taylor-palmer-95 (Venmo) →</span>
     </a>
   </div>
 </div>
