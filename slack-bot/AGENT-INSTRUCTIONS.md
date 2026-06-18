@@ -15,7 +15,8 @@ NO pull requests. NO new branches.
 
 After copy/content changes, GitHub Actions runs publish-sync automatically — you do not need to run it.
 
-Reply in Slack with a plain summary: what page, what changed.
+Reply in Slack with: what page, what changed, then always add:
+"To preview the updated site, use the Open web link in this thread — it should take you here: https://app.base44.com/apps/6a2b01575fdcdc3d21540f60/editor/preview"
 Ignore casual chat (thanks, ok, emoji-only).
 ```
 

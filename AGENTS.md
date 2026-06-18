@@ -78,7 +78,10 @@ Pages → sections → blocks. Key slugs:
 6. **Hero video/images** — use URL fields in hero-video block; uploads go through Base44 file URLs not data URLs.
 7. **Run `npm run build`** — fix all errors before finishing.
 8. **Git**: commit with clear message, push directly to `main`. NO pull request. NO new branch.
-9. **Reply in Slack** — plain summary: what page, what changed. For copy edits note that publish-sync runs automatically after push.
+9. **Reply in Slack** — always end with this preview note (include the URL exactly):
+   - What page and what changed (1–2 sentences)
+   - Then: "To preview the updated site, use the **Open web** link in this thread — it should take you here: https://app.base44.com/apps/6a2b01575fdcdc3d21540f60/editor/preview"
+   - For copy edits, mention publish-sync runs automatically after push. For code changes, note Porter may need to Publish on Base44.com.
 
 ## Do NOT
 
