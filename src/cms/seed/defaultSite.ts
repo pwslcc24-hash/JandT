@@ -111,8 +111,8 @@ export function createDefaultSiteDocument(): SiteDocument {
       ]),
       pageContent("registry", "Registry", [
         "Your presence is the greatest gift.",
-        '<a href="https://www.amazon.com/wedding/share/taylorjayden">Our registry</a>',
-        "Venmo: @taylor-palmer-95",
+        '<a href="https://www.amazon.com/wedding/share/taylorjayden" target="_blank" rel="noreferrer">Our registry</a>',
+        '<a href="https://venmo.com/taylor-palmer-95" target="_blank" rel="noreferrer">Venmo: @taylor-palmer-95</a>',
       ]),
     ],
   };
