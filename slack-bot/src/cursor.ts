@@ -1,5 +1,22 @@
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { Agent, CursorAgentError, type RunResult } from "@cursor/sdk";
 import { cursorConfig as config } from "./cursor-config.js";
+
+const execFileAsync = promisify(execFile);
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+
+let cachedSystemPrompt: string | null = null;
+
+function loadSystemPrompt(): string {
+  if (cachedSystemPrompt) return cachedSystemPrompt;
+  const path = resolve(dirname(fileURLToPath(import.meta.url)), "agent-prompt.txt");
+  cachedSystemPrompt = readFileSync(path, "utf8").trim();
+  return cachedSystemPrompt;
+}
 
 export interface EditResult {
   agentId: string;
@@ -8,32 +25,16 @@ export interface EditResult {
   summary: string;
   prUrl?: string;
   branch?: string;
+  publishedLive?: boolean;
 }
 
 function buildPrompt(userRequest: string, slackUser: string): string {
-  const pushInstructions =
-    config.gitMode === "pr"
-      ? "Push your changes to a new branch. A pull request will be opened automatically when you finish."
-      : `Commit your changes with a clear message and push directly to the \`${config.githubBranch}\` branch.`;
-
   return [
-    "You are editing the Holdsworth wedding website repository (React + Vite + Base44).",
+    loadSystemPrompt(),
     "",
-    "Key paths:",
-    "- CMS / editor: src/cms/",
-    "- Pages: src/pages/",
-    "- Styles: src/index.css, src/styles/editor.css",
-    "- Live content is published via Base44 SiteContent entity",
-    "",
+    "---",
     `Slack user: ${slackUser}`,
     `User request: ${userRequest}`,
-    "",
-    "Instructions:",
-    "1. Make the smallest correct change that fulfills the request.",
-    "2. Match existing code style and conventions.",
-    "3. Run `npm run build` and fix any errors before finishing.",
-    "4. Do not commit secrets or .env files.",
-    `5. ${pushInstructions}`,
   ].join("\n");
 }
 
@@ -49,6 +50,21 @@ function lastAssistantText(result: RunResult): string {
   const text = result.result?.trim();
   if (text) return text.slice(0, 1200);
   return "Agent finished.";
+}
+
+async function runPublishSync(onProgress?: (line: string) => void): Promise<boolean> {
+  try {
+    onProgress?.("Syncing live content to Base44…");
+    await execFileAsync("npx", ["tsx", "scripts/publish-sync.ts"], {
+      cwd: repoRoot,
+      timeout: 120_000,
+    });
+    return true;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    onProgress?.(`publish-sync failed: ${msg.slice(0, 200)}`);
+    return false;
+  }
 }
 
 export async function runSiteEdit(
@@ -90,6 +106,7 @@ export async function runSiteEdit(
     throw new Error(`Agent run failed (${result.id}). Check Cursor dashboard for logs.`);
   }
 
+  const publishedLive = await runPublishSync(onProgress);
   const { prUrl, branch } = extractGitLinks(result);
 
   return {
@@ -99,6 +116,7 @@ export async function runSiteEdit(
     summary: lastAssistantText(result),
     prUrl,
     branch,
+    publishedLive,
   };
 }
 

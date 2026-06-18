@@ -90,7 +90,12 @@ async function handleEditRequest({
       lines.push(`PR: ${result.prUrl}`);
     } else {
       lines.push(`Pushed to \`${config.githubBranch}\` on GitHub.`);
-      lines.push("_Publish on Base44.com to update the live site._");
+      if (result.publishedLive) {
+        lines.push("_Live content synced to Base44._");
+      } else {
+        lines.push("_Note: live sync may have failed — check logs._");
+      }
+      lines.push("_Publish on Base44.com if code changed._");
     }
     lines.push("", result.summary);
 

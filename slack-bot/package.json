@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.prod.json",
+    "build": "tsc -p tsconfig.prod.json && cp src/agent-prompt.txt dist/",
     "edit": "tsx src/edit-cli.ts",
     "publish-sync": "tsx ../scripts/publish-sync.ts",
     "provision": "tsx src/provision-slack.ts",
