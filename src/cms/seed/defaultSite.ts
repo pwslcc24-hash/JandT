@@ -111,7 +111,8 @@ export function createDefaultSiteDocument(): SiteDocument {
       ]),
       pageContent("registry", "Registry", [
         "Your presence is the greatest gift.",
-        "Registry links can be added in the admin content manager.",
+        '<a href="https://www.amazon.com/wedding/share/taylorjayden">Our registry</a>',
+        "Venmo: @taylor-palmer-95",
       ]),
     ],
   };

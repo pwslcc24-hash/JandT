@@ -55,7 +55,8 @@ export const wedding = {
       title: "Registry",
       body: [
         "Your presence is the greatest gift.",
-        "Registry links can be added in src/config/wedding.js.",
+        '<a href="https://www.amazon.com/wedding/share/taylorjayden">Our registry</a>',
+        "Venmo: @taylor-palmer-95",
       ],
     },
   ],
