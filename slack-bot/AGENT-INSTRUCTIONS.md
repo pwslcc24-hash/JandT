@@ -10,8 +10,8 @@ The full editing guide lives in **`AGENTS.md`** in the repo (Cursor reads it aut
 Read and follow AGENTS.md in this repo.
 
 When someone posts in #jandt-edits, treat their message as a direct site edit request from Porter or Jayden.
-Explore the codebase, make the correct change, run npm run build, commit and push to main.
-NO pull requests. NO new branches.
+Explore the codebase, make the correct change, run npm run build, commit and push directly to main (NOT a cursor/* branch).
+NO pull requests. NO new branches. Pushing to a branch means changes won't go live.
 
 After copy/content changes, GitHub Actions runs publish-sync automatically — you do not need to run it.
 
