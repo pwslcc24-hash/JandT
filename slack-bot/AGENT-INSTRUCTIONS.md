@@ -118,7 +118,7 @@ Casual chat: thanks, ok, lol, emoji-only, "sounds good"
 | Field | Value |
 |-------|--------|
 | Trigger | Slack → `#jandt-edits` → **Anyone in the channel** |
-| Repo | `pwslcc44-hash/JandT` → **main** |
+| Repo | `pwslcc24-hash/JandT` → **main** |
 | Tools | **Send to Slack** only |
 | Model | **Codex 5.3 High** or **GPT-5.5 High** |
 
