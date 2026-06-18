@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.prod.json",
     "edit": "tsx src/edit-cli.ts",
+    "publish-sync": "tsx ../scripts/publish-sync.ts",
     "provision": "tsx src/provision-slack.ts",
+    "make-public": "tsx src/make-channel-public.ts",
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
     "start:prod": "node dist/index.js",
