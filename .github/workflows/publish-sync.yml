@@ -11,6 +11,8 @@ on:
       - src/config/wedding.js
       - src/styles/canvas-editor.css
       - src/index.css
+      - scripts/publish-sync.ts
+      - .github/workflows/publish-sync.yml
 
 jobs:
   sync:

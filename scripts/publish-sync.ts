@@ -37,9 +37,9 @@ type Block = { blockKey: string; value?: Record<string, unknown> };
 type Section = { sectionKey: string; blocks: Block[] };
 type Page = { slug: string; sections: Section[] };
 
-function syncPageContent(published: Page, defaults: Page) {
-  const defSection = defaults.sections.find((s) => s.sectionKey === "content");
-  const pubSection = published.sections.find((s) => s.sectionKey === "content");
+function syncPageSection(published: Page, defaults: Page, sectionKey: string) {
+  const defSection = defaults.sections.find((s) => s.sectionKey === sectionKey);
+  const pubSection = published.sections.find((s) => s.sectionKey === sectionKey);
   if (!defSection || !pubSection) return;
 
   for (const defBlock of defSection.blocks) {
@@ -78,7 +78,13 @@ async function main() {
 
   for (const defPage of defaults.pages) {
     const pubPage = doc.pages.find((p) => p.slug === defPage.slug);
-    if (pubPage) syncPageContent(pubPage, defPage as Page);
+    if (!pubPage) continue;
+
+    syncPageSection(pubPage, defPage as Page, "content");
+
+    if (defPage.slug === "story") {
+      syncPageSection(pubPage, defPage as Page, "media");
+    }
   }
 
   await base44.entities.SiteContent.update(records[0].id, {
