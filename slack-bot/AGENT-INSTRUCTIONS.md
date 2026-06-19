@@ -1,8 +1,6 @@
 # Slack agent — Cursor Automation prompt
 
-Paste this into **Agent Instructions** on [cursor.com/automations](https://cursor.com/automations).
-
-The full editing guide lives in **`AGENTS.md`** in the repo (Cursor reads it automatically). This prompt is the short trigger layer.
+Paste **only** the text inside the code block below into **Agent Instructions** on [cursor.com/automations](https://cursor.com/automations). Do not paste the markdown tables or notes below the block.
 
 ---
 
@@ -13,7 +11,7 @@ When someone posts in #jandt-edits, treat their message as a direct site edit re
 Work exactly like Porter's Cursor IDE session: explore the repo, match existing design (agenda/registry HTML + CSS), deliver polished results — NOT bare text and raw links.
 
 Explore the codebase, make the correct change, run npm run build, commit and push directly to main (NOT a cursor/* branch).
-NO pull requests. NO new branches.
+NO pull requests. NO new branches. Pushing to a branch means changes won't go live.
 
 After copy/content changes, GitHub Actions runs publish-sync automatically — you do not need to run it.
 
@@ -35,7 +33,6 @@ Ignore casual chat (thanks, ok, emoji-only).
 
 ## Important
 
-- **Use Cursor Automations only** — do not run the Mac bot (`install-macos-service.sh`) at the same time or edits run twice.
+- Paste **only** the prompt block above — not this entire file.
 - Automations work 24/7 with your Mac closed.
-- After **code** deploys: **Publish on Base44.com**.
-- **Re-paste this prompt** if you change AGENTS.md significantly (automation UI does not auto-update).
+- After **code/CSS** changes: **Publish on Base44.com** (copy syncs via GitHub Actions; styles need Publish).
