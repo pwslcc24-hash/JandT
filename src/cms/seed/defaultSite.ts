@@ -148,6 +148,7 @@ function pageContent(
       styles: {},
       stylesTablet: {},
       stylesMobile: {},
+      // Keep story media empty by default so publish-sync clears any live story photo/video.
       blocks: [block("media-stack", "json", { items: [] })],
     });
   }
