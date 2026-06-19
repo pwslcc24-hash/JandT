@@ -2,7 +2,7 @@
  * Sync defaultSite.ts content into Base44 SiteContent (what visitors see).
  * Run after the agent edits defaultSite.ts / pushes to main.
  *
- * Usage: cd slack-bot && npm run publish-sync
+ * Usage: cd automation && npm run publish-sync
  */
 import { readFileSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
@@ -11,7 +11,7 @@ import { createDefaultSiteDocument } from "../src/cms/seed/defaultSite.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 loadEnv(resolve(root, ".env.local"));
-loadEnv(resolve(root, "slack-bot/.env"));
+loadEnv(resolve(root, "automation/.env"));
 
 const APP_ID = process.env.VITE_BASE44_APP_ID;
 const CLIENT_SLUG = process.env.VITE_CLIENT_SLUG || "holdsworth";

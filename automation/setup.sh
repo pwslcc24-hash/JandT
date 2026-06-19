@@ -2,11 +2,11 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-ENV_FILE="$ROOT/slack-bot/.env"
+ENV_FILE="$ROOT/automation/.env"
 REPO="pwslcc24-hash/JandT"
 
 echo ""
-echo "=== JandT site editor — 2-minute setup ==="
+echo "=== JandT site editor — setup ==="
 echo ""
 echo "1) Open Cursor → Dashboard → Integrations → create an API key"
 echo "   https://cursor.com/dashboard/integrations"
@@ -15,7 +15,7 @@ echo "2) Make sure GitHub repo is connected in Cursor (team GitHub integration)"
 echo ""
 
 if [[ -f "$ENV_FILE" ]] && grep -q "CURSOR_API_KEY=." "$ENV_FILE" 2>/dev/null; then
-  echo "Found existing slack-bot/.env — updating GitHub secret only."
+  echo "Found existing automation/.env — updating GitHub secret only."
   # shellcheck disable=SC1090
   source "$ENV_FILE"
 else
@@ -44,16 +44,16 @@ gh secret set CURSOR_API_KEY --body "$CURSOR_API_KEY" --repo "$REPO"
 
 echo ""
 echo "Installing dependencies…"
-(cd "$ROOT/slack-bot" && npm install)
+(cd "$ROOT/automation" && npm install)
 
 echo ""
 echo "=== You're set ==="
 echo ""
-echo "From your Mac (terminal):"
-echo '  cd slack-bot && npm run edit -- "Make the hero text bigger on mobile"'
+echo "Slack edits: Cursor Automation on #jandt-edits (see automation/AUTOMATION.md)"
 echo ""
-echo "From your phone (no Slack needed):"
-echo "  GitHub app → $REPO → Actions → Site edit → Run workflow → type your change"
+echo "Manual edit from terminal:"
+echo '  cd automation && npm run edit -- "Make the hero text bigger on mobile"'
 echo ""
-echo "Optional Slack bot (more setup): see slack-bot/README.md"
+echo "Manual edit from phone:"
+echo "  GitHub app → $REPO → Actions → Site edit → Run workflow"
 echo ""

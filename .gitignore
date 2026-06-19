@@ -30,7 +30,6 @@ dist-ssr
 .env
 .vite
 
-# Slack bot
-slack-bot/node_modules
-slack-bot/dist
-slack-bot/.env
+# Automation scripts (Cursor CLI + publish-sync)
+automation/node_modules
+automation/.env

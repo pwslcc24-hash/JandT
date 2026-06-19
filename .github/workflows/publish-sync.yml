@@ -12,6 +12,7 @@ on:
       - src/styles/canvas-editor.css
       - src/index.css
       - scripts/publish-sync.ts
+      - automation/**
       - .github/workflows/publish-sync.yml
 
 jobs:
@@ -31,12 +32,12 @@ jobs:
       - name: Install root deps
         run: npm ci
 
-      - name: Install slack-bot deps
-        working-directory: slack-bot
+      - name: Install automation deps
+        working-directory: automation
         run: npm ci
 
       - name: Sync defaultSite → Base44 SiteContent
-        working-directory: slack-bot
+        working-directory: automation
         env:
           VITE_BASE44_APP_ID: 6a2b01575fdcdc3d21540f60
         run: npm run publish-sync

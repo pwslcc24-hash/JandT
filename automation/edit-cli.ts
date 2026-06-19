@@ -12,7 +12,7 @@ console.log(`Editing ${process.env.GITHUB_REPO_URL ?? "https://github.com/pwslcc
 console.log(`Request: ${prompt}\n`);
 
 try {
-  const result = await runSiteEdit(prompt, "cli", (line) => {
+  const result = await runSiteEdit(prompt, (line) => {
     console.log(`… ${line}`);
   });
 
@@ -20,7 +20,7 @@ try {
   console.log(`Agent: ${result.agentId}`);
   console.log(`Run:   ${result.runId}`);
   if (result.prUrl) console.log(`PR:    ${result.prUrl}`);
-  else console.log(`Pushed to main. Publish on Base44.com for live site.`);
+  else console.log(`Pushed to main. Copy syncs via GitHub Actions; Publish on Base44.com for code/CSS.`);
   console.log(`\n${result.summary}`);
 } catch (err) {
   console.error(`\nFailed: ${formatCursorError(err)}`);

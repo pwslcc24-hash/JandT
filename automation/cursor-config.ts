@@ -6,7 +6,7 @@ export function getCursorApiKey(): string {
   const value = process.env.CURSOR_API_KEY?.trim();
   if (!value) {
     throw new Error(
-      "Missing CURSOR_API_KEY. Get one at https://cursor.com/dashboard/integrations then run: ./slack-bot/setup.sh"
+      "Missing CURSOR_API_KEY. Get one at https://cursor.com/dashboard/integrations then run: ./automation/setup.sh"
     );
   }
   return value;

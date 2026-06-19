@@ -1,19 +1,16 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import { Agent, CursorAgentError, type RunResult } from "@cursor/sdk";
 import { cursorConfig as config } from "./cursor-config.js";
 
-const execFileAsync = promisify(execFile);
-const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 let cachedSystemPrompt: string | null = null;
 
 function loadSystemPrompt(): string {
   if (cachedSystemPrompt) return cachedSystemPrompt;
-  const path = resolve(dirname(fileURLToPath(import.meta.url)), "agent-prompt.txt");
+  const path = resolve(repoRoot, "AGENTS.md");
   cachedSystemPrompt = readFileSync(path, "utf8").trim();
   return cachedSystemPrompt;
 }
@@ -25,17 +22,10 @@ export interface EditResult {
   summary: string;
   prUrl?: string;
   branch?: string;
-  publishedLive?: boolean;
 }
 
-function buildPrompt(userRequest: string, slackUser: string): string {
-  return [
-    loadSystemPrompt(),
-    "",
-    "---",
-    `Slack user: ${slackUser}`,
-    `User request: ${userRequest}`,
-  ].join("\n");
+function buildPrompt(userRequest: string): string {
+  return [loadSystemPrompt(), "", "---", `User request: ${userRequest}`].join("\n");
 }
 
 function extractGitLinks(result: RunResult): { prUrl?: string; branch?: string } {
@@ -52,24 +42,8 @@ function lastAssistantText(result: RunResult): string {
   return "Agent finished.";
 }
 
-async function runPublishSync(onProgress?: (line: string) => void): Promise<boolean> {
-  try {
-    onProgress?.("Syncing live content to Base44…");
-    await execFileAsync("npx", ["tsx", "scripts/publish-sync.ts"], {
-      cwd: repoRoot,
-      timeout: 120_000,
-    });
-    return true;
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    onProgress?.(`publish-sync failed: ${msg.slice(0, 200)}`);
-    return false;
-  }
-}
-
 export async function runSiteEdit(
   userRequest: string,
-  slackUser: string,
   onProgress?: (line: string) => void
 ): Promise<EditResult> {
   const pushToMain = config.gitMode === "main";
@@ -87,7 +61,7 @@ export async function runSiteEdit(
 
   onProgress?.(`Agent started (\`${agent.agentId}\`)…`);
 
-  const run = await agent.send(buildPrompt(userRequest, slackUser));
+  const run = await agent.send(buildPrompt(userRequest));
   onProgress?.(`Run \`${run.id}\` in progress…`);
 
   for await (const event of run.stream()) {
@@ -106,7 +80,6 @@ export async function runSiteEdit(
     throw new Error(`Agent run failed (${result.id}). Check Cursor dashboard for logs.`);
   }
 
-  const publishedLive = await runPublishSync(onProgress);
   const { prUrl, branch } = extractGitLinks(result);
 
   return {
@@ -116,7 +89,6 @@ export async function runSiteEdit(
     summary: lastAssistantText(result),
     prUrl,
     branch,
-    publishedLive,
   };
 }
 

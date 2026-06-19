@@ -1,0 +1,19 @@
+{
+  "name": "jandt-automation",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "edit": "tsx edit-cli.ts",
+    "publish-sync": "tsx ../scripts/publish-sync.ts"
+  },
+  "dependencies": {
+    "@cursor/sdk": "^1.0.19",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

@@ -20,14 +20,14 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: slack-bot/package-lock.json
+          cache-dependency-path: automation/package-lock.json
 
       - name: Install
-        working-directory: slack-bot
+        working-directory: automation
         run: npm ci
 
       - name: Run Cursor agent
-        working-directory: slack-bot
+        working-directory: automation
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
           GITHUB_REPO_URL: https://github.com/${{ github.repository }}

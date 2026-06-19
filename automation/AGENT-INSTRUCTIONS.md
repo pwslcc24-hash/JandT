@@ -1,6 +1,6 @@
-# Slack agent — Cursor Automation prompt
+# Cursor Automation — agent prompt
 
-Paste **only** the text inside the code block below into **Agent Instructions** on [cursor.com/automations](https://cursor.com/automations). Do not paste the markdown tables or notes below the block.
+Paste **only** the text inside the code block below into **Agent Instructions** on [cursor.com/automations](https://cursor.com/automations).
 
 ---
 
@@ -28,11 +28,7 @@ Ignore casual chat (thanks, ok, emoji-only).
 |-------|--------|
 | Trigger | Slack → `#jandt-edits` → **Anyone in the channel** |
 | Repo | `pwslcc24-hash/JandT` → **main** |
-| Tools | **Send to Slack** only — turn off **Open pull request** |
-| Model | **Codex 5.3 High** or **GPT-5.5 High** |
+| Tools | **Send to Slack** + **Read Public Slack Channels** |
+| Model | **Codex 5.3 High**, **Opus**, or **Auto** (your choice) |
 
-## Important
-
-- Paste **only** the prompt block above — not this entire file.
-- Automations work 24/7 with your Mac closed.
-- After **code/CSS** changes: **Publish on Base44.com** (copy syncs via GitHub Actions; styles need Publish).
+After **code/CSS** changes: **Publish on Base44.com**.
