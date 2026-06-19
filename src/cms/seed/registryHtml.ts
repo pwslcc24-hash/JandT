@@ -1,7 +1,7 @@
 /** Default registry page HTML — matches info/agenda polish */
 export const DEFAULT_REGISTRY_HTML = `
 <div class="registry-wrap">
-  <p class="registry-intro">We are so grateful for your love.</p>
+  <p class="registry-intro">Thank you for celebrating with us</p>
   <p class="registry-subline">If you'd like to celebrate with a gift, we'd be grateful for your generosity.</p>
 
   <div class="registry-cards">
