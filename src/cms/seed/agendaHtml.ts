@@ -6,7 +6,7 @@ export const DEFAULT_AGENDA_HTML = `
   <p class="agenda-date">August 5th</p>
 
   <p class="section-label">Ceremony — Lindon Temple</p>
-  <div class="timeline" style="margin-bottom: 1.5rem;">
+  <div class="timeline">
     <div class="tl-item">
       <div class="tl-dot accent"></div>
       <p class="tl-time">10:30 – 11:30 AM</p>
@@ -14,7 +14,7 @@ export const DEFAULT_AGENDA_HTML = `
     </div>
   </div>
 
-  <p class="section-label">Reception — Cedar Hills Golf Club</p>
+  <p class="section-label section-label--reception">Reception — Cedar Hills Golf Club</p>
   <div class="venue-card">
     <p class="venue-name">The Clubhouse at Cedar Hills Golf Club</p>
     <p class="venue-address">10640 Clubhouse Dr, Cedar Hills, UT</p>
@@ -24,7 +24,7 @@ export const DEFAULT_AGENDA_HTML = `
     </div>
   </div>
 
-  <div class="timeline" style="margin-top: 1rem;">
+  <div class="timeline timeline--reception">
     <div class="tl-item">
       <div class="tl-dot accent"></div>
       <p class="tl-time">3:30 – 4:00 PM</p>
@@ -38,7 +38,7 @@ export const DEFAULT_AGENDA_HTML = `
     <div class="tl-item">
       <div class="tl-dot accent"></div>
       <p class="tl-time">6:00 – 7:00 PM</p>
-      <p class="tl-event">Mariachi band and lawn games</p>
+      <p class="tl-event">Mariachi band<br />Lawn games</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot accent"></div>

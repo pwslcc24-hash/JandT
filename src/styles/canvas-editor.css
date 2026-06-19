@@ -85,10 +85,18 @@
   content: "";
   position: absolute;
   left: 6px;
-  top: 8px;
-  bottom: 8px;
+  top: 0;
+  bottom: 0;
   width: 1px;
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(156, 163, 175, 0.3);
+}
+
+.section-label--reception {
+  margin-top: 1.75rem;
+}
+
+.timeline--reception {
+  margin-top: 1rem;
 }
 
 .tl-item {
@@ -126,6 +134,7 @@
 .tl-event {
   font-size: 15px;
   font-weight: 500;
+  line-height: 1.5;
   color: var(--color-text-primary, #1a1a1a);
   margin: 0 0 1px;
 }
