@@ -149,18 +149,25 @@ export default function EditableGallery({ albumSlug, album }: EditableGalleryPro
     [site, albumSlug, updateBlockValue]
   );
 
-  const handleFile = async (file: File, index: number) => {
-    if (!site || !file) return;
+  const handleFiles = async (files: File[], startIndex: number) => {
+    if (!site || files.length === 0) return;
     setUploading(true);
+    setTargetIndex(startIndex);
     try {
-      const asset = await uploadMedia(file, site.clientId);
       const next = [...items];
-      next[index] = {
-        src: asset.publicUrl,
-        alt: file.name,
-        type: mediaKindFromFile(file),
-        zIndex: next[index]?.zIndex ?? index,
-      };
+      for (const [offset, file] of files.entries()) {
+        const index = startIndex + offset;
+        while (next.length <= index) {
+          next.push({ src: "", alt: "", type: "image", zIndex: next.length });
+        }
+        const asset = await uploadMedia(file, site.clientId);
+        next[index] = {
+          src: asset.publicUrl,
+          alt: file.name,
+          type: mediaKindFromFile(file),
+          zIndex: next[index]?.zIndex ?? index,
+        };
+      }
       saveImages(next);
     } finally {
       setUploading(false);
@@ -240,11 +247,14 @@ export default function EditableGallery({ albumSlug, album }: EditableGalleryPro
       <input
         ref={inputRef}
         type="file"
+        multiple
         accept="image/*,video/*"
         className="sr-only"
         onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f && targetIndex !== null) handleFile(f, targetIndex);
+          const selected = Array.from(e.target.files ?? []);
+          if (selected.length > 0 && targetIndex !== null) {
+            handleFiles(selected, targetIndex);
+          }
           e.target.value = "";
         }}
       />
