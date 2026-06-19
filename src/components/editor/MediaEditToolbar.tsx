@@ -1,4 +1,5 @@
 import { ArrowDown, ArrowUp, Trash2, Upload } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface MediaEditToolbarProps {
   onReplace: () => void;
@@ -6,6 +7,7 @@ interface MediaEditToolbarProps {
   onSendBack: () => void;
   onRemove?: () => void;
   uploading?: boolean;
+  children?: ReactNode;
 }
 
 export default function MediaEditToolbar({
@@ -14,6 +16,7 @@ export default function MediaEditToolbar({
   onSendBack,
   onRemove,
   uploading,
+  children,
 }: MediaEditToolbarProps) {
   return (
     <div className="media-edit-toolbar" onClick={(e) => e.stopPropagation()}>
@@ -34,6 +37,7 @@ export default function MediaEditToolbar({
           <Trash2 size={14} />
         </button>
       )}
+      {children}
     </div>
   );
 }

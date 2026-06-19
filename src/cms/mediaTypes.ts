@@ -1,10 +1,12 @@
 export type MediaKind = "image" | "video";
+export type GalleryTileSize = "small" | "wide" | "tall" | "large";
 
 export interface MediaItem {
   src: string;
   alt?: string;
   type?: MediaKind;
   zIndex?: number;
+  tileSize?: GalleryTileSize;
 }
 
 export interface PhotoAlbum {
@@ -31,13 +33,14 @@ export const MEDIA_ACCEPT = "image/*,video/*,.mp4,.mov,.webm,.m4v";
 
 export function normalizeMediaItem(raw: Partial<MediaItem> | string): MediaItem {
   if (typeof raw === "string") {
-    return { src: raw, type: "image", zIndex: 0 };
+    return { src: raw, type: "image", zIndex: 0, tileSize: "small" };
   }
   return {
     src: raw.src ?? "",
     alt: raw.alt ?? "",
     type: raw.type ?? "image",
     zIndex: raw.zIndex ?? 0,
+    tileSize: raw.tileSize ?? "small",
   };
 }
 
