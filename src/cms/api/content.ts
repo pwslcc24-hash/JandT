@@ -46,11 +46,16 @@ export async function loadSiteDocument(options: LoadSiteOptions = {}): Promise<S
 }
 
 async function loadPublishedSource(): Promise<SiteDocument | null> {
+  // Base44 SiteContent is the visitor-facing source of truth.
+  const fromBase44 = await loadPublishedSiteDocument();
+  if (fromBase44) return fromBase44;
+
   if (isSupabaseConfigured) {
     const fromDb = await loadFromSupabase();
     if (fromDb) return fromDb;
   }
-  return loadPublishedSiteDocument();
+
+  return null;
 }
 
 function migrateLegacyLocalStorage(): void {
