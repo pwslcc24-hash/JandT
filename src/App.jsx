@@ -13,10 +13,12 @@ import AdminContent from "@/pages/admin/AdminContent";
 import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminSettings from "@/pages/admin/AdminSettings";
 import AdminAnalytics from "@/pages/admin/AdminAnalytics";
+import ScrollToTop from "@/components/ScrollToTop";
 
 function PublicLayout() {
   return (
     <EditorShell>
+      <ScrollToTop />
       <Outlet />
     </EditorShell>
   );
