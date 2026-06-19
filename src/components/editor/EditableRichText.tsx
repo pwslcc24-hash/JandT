@@ -35,12 +35,55 @@ export default function EditableRichText({
   const html = String(block?.value?.html ?? fallback);
   const editable = editMode && isAdmin && !aiPickMode;
 
+  const isSelected =
+    selection?.blockKey === blockKey &&
+    selection?.sectionKey === sectionKey &&
+    selection?.pageSlug === pageSlug;
+
+  return (
+    <ResizableBlock
+      pageSlug={pageSlug}
+      sectionKey={sectionKey}
+      blockKey={blockKey}
+      blockId={block?.id}
+      className={cn("cms-rich-text-wrap", isSelected && !aiPickMode && "cms-rich-text-wrap--selected")}
+    >
+      {editable ? (
+        <EditableRichTextEditor
+          html={html}
+          className={className}
+          editable={editable}
+          onHtmlChange={(nextHtml) => updateBlockValue(pageSlug, sectionKey, blockKey, { html: nextHtml })}
+        />
+      ) : (
+        <div
+          className={cn("cms-rich-text", className)}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      )}
+    </ResizableBlock>
+  );
+}
+
+interface EditableRichTextEditorProps {
+  html: string;
+  className?: string;
+  editable: boolean;
+  onHtmlChange: (html: string) => void;
+}
+
+function EditableRichTextEditor({
+  html,
+  className,
+  editable,
+  onHtmlChange,
+}: EditableRichTextEditorProps) {
   const editor = useTiptapEditor({
     extensions: [StarterKit],
     content: html,
     editable,
     onUpdate: ({ editor: ed }) => {
-      updateBlockValue(pageSlug, sectionKey, blockKey, { html: ed.getHTML() });
+      onHtmlChange(ed.getHTML());
     },
   });
 
@@ -56,23 +99,10 @@ export default function EditableRichText({
     }
   }, [html, editor]);
 
-  const isSelected =
-    selection?.blockKey === blockKey &&
-    selection?.sectionKey === sectionKey &&
-    selection?.pageSlug === pageSlug;
-
   return (
-    <ResizableBlock
-      pageSlug={pageSlug}
-      sectionKey={sectionKey}
-      blockKey={blockKey}
-      blockId={block?.id}
-      className={cn("cms-rich-text-wrap", isSelected && !aiPickMode && "cms-rich-text-wrap--selected")}
-    >
-      <EditorContent
-        editor={editor}
-        className={cn("cms-rich-text", className, editable && "cms-rich-text--editing")}
-      />
-    </ResizableBlock>
+    <EditorContent
+      editor={editor}
+      className={cn("cms-rich-text", className, editable && "cms-rich-text--editing")}
+    />
   );
 }
