@@ -9,18 +9,8 @@ export const DEFAULT_AGENDA_HTML = `
   <div class="timeline" style="margin-bottom: 1.5rem;">
     <div class="tl-item">
       <div class="tl-dot accent"></div>
-      <p class="tl-time">9:30 AM</p>
-      <p class="tl-event">Arrive at temple</p>
-    </div>
-    <div class="tl-item">
-      <div class="tl-dot accent"></div>
       <p class="tl-time">10:30 – 11:30 AM</p>
-      <p class="tl-event">Sealing & get ready</p>
-    </div>
-    <div class="tl-item">
-      <div class="tl-dot accent"></div>
-      <p class="tl-time">11:30 AM – 12:30 PM</p>
-      <p class="tl-event">Temple photos</p>
+      <p class="tl-event">Sealing at Lindon Temple</p>
     </div>
   </div>
 
@@ -36,34 +26,19 @@ export const DEFAULT_AGENDA_HTML = `
 
   <div class="timeline" style="margin-top: 1rem;">
     <div class="tl-item">
-      <div class="tl-dot"></div>
-      <p class="tl-time">12:00 – 2:00 PM</p>
-      <p class="tl-event">Venue setup</p>
-    </div>
-    <div class="tl-item break-item">
-      <div class="tl-dot"></div>
-      <p class="tl-time">2:00 – 3:30 PM</p>
-      <p class="tl-event">Break</p>
-    </div>
-    <div class="tl-item">
       <div class="tl-dot accent"></div>
-      <p class="tl-time">3:00 – 3:30 PM</p>
-      <p class="tl-event">Bridal party rehearsal</p>
-    </div>
-    <div class="tl-item">
-      <div class="tl-dot accent"></div>
-      <p class="tl-time">3:30 – 4:30 PM</p>
-      <p class="tl-event">Ring ceremony & photos</p>
+      <p class="tl-time">3:30 – 4:00 PM</p>
+      <p class="tl-event">Ring ceremony</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot accent"></div>
       <p class="tl-time">4:30 – 6:00 PM</p>
-      <p class="tl-event">Dinner</p>
+      <p class="tl-event">Family dinner</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot accent"></div>
       <p class="tl-time">6:00 – 7:00 PM</p>
-      <p class="tl-event">Mariachi band, lawn games & mingling</p>
+      <p class="tl-event">Mariachi band and lawn games</p>
     </div>
     <div class="tl-item">
       <div class="tl-dot accent"></div>
