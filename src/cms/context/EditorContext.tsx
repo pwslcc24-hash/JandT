@@ -91,6 +91,46 @@ interface EditorContextValue {
 
 const EditorContext = createContext<EditorContextValue | null>(null);
 
+const noop = () => {};
+const noopAsync = async () => {};
+
+/** Safe fallback when Base44 preview scans components outside the full app tree */
+const READONLY_EDITOR: EditorContextValue = {
+  user: null,
+  isAdmin: false,
+  isLoading: false,
+  editMode: false,
+  setEditMode: noop,
+  deviceMode: "desktop",
+  setDeviceMode: noop,
+  site: null,
+  saveStatus: "idle",
+  publishStatus: "idle",
+  publishError: "",
+  publishSite: noopAsync,
+  selection: null,
+  setSelection: noop,
+  login: noopAsync,
+  logout: noopAsync,
+  devLogin: noop,
+  unlockWithPin: () => false,
+  updateBlockText: noop,
+  updateBlockValue: noop,
+  updateBlockStyles: noop,
+  reorderSections: noop,
+  undo: noop,
+  redo: noop,
+  canUndo: false,
+  canRedo: false,
+  getBlockStyles: () => ({}),
+  aiPanelOpen: false,
+  setAiPanelOpen: noop,
+  aiPickMode: false,
+  setAiPickMode: noop,
+  selectTarget: noop,
+  applyAiEdits: noop,
+};
+
 export function EditorProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<CmsUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -395,6 +435,5 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
 export function useEditor() {
   const ctx = useContext(EditorContext);
-  if (!ctx) throw new Error("useEditor must be used within EditorProvider");
-  return ctx;
+  return ctx ?? READONLY_EDITOR;
 }

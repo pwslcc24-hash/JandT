@@ -1,5 +1,4 @@
-import { BrowserRouter, Route, Routes, Outlet, Navigate } from "react-router-dom";
-import { EditorProvider } from "@/cms/context/EditorContext";
+import { Route, Routes, Outlet, Navigate } from "react-router-dom";
 import EditorShell from "@/components/editor/EditorShell";
 import WeddingLanding from "@/pages/WeddingLanding";
 import WeddingSection from "@/pages/WeddingSection";
@@ -23,32 +22,26 @@ function PublicLayout() {
   );
 }
 
-function App() {
+export default function App() {
   return (
-    <BrowserRouter>
-      <EditorProvider>
-        <Routes>
-          <Route path="/studio" element={<StudioUnlockPage />} />
-          <Route path="/admin/login" element={<Navigate to="/studio" replace />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="pages" element={<AdminPages />} />
-            <Route path="media" element={<AdminMedia />} />
-            <Route path="content" element={<AdminContent />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="settings" element={<AdminSettings />} />
-            <Route path="analytics" element={<AdminAnalytics />} />
-          </Route>
-          <Route element={<PublicLayout />}>
-            <Route path="/builder" element={<PageBuilder />} />
-            <Route path="/" element={<WeddingLanding />} />
-            <Route path="/photos/:album" element={<WeddingGallery />} />
-            <Route path="/:slug" element={<WeddingSection />} />
-          </Route>
-        </Routes>
-      </EditorProvider>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/studio" element={<StudioUnlockPage />} />
+      <Route path="/admin/login" element={<Navigate to="/studio" replace />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="pages" element={<AdminPages />} />
+        <Route path="media" element={<AdminMedia />} />
+        <Route path="content" element={<AdminContent />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="settings" element={<AdminSettings />} />
+        <Route path="analytics" element={<AdminAnalytics />} />
+      </Route>
+      <Route element={<PublicLayout />}>
+        <Route path="/builder" element={<PageBuilder />} />
+        <Route path="/" element={<WeddingLanding />} />
+        <Route path="/photos/:album" element={<WeddingGallery />} />
+        <Route path="/:slug" element={<WeddingSection />} />
+      </Route>
+    </Routes>
   );
 }
-
-export default App;
