@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useCountdown } from "@/hooks/useCountdown";
 import { WeddingIcon } from "@/components/wedding/icons";
@@ -18,12 +18,6 @@ export default function WeddingLanding() {
   const { couple, date, videoUrl, nav, banner, exploreLabel, sectionOrder, getSectionKey } =
     useSiteContent();
   const days = useCountdown(date.iso);
-
-  useEffect(() => {
-    if (window.location.hash === "#explore") {
-      document.getElementById("explore")?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, []);
 
   const renderSection = (sectionId, sectionKey) => {
     if (sectionKey === "hero") return renderHero();

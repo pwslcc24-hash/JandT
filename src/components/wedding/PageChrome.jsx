@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SideMenu from "./SideMenu";
 import { WeddingIcon } from "./icons";
 
-export default function PageChrome({ children, backTo = "/#explore" }) {
+export default function PageChrome({ children, backTo = "/" }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
