@@ -27,7 +27,7 @@ export async function loadSiteDocument(options: LoadSiteOptions = {}): Promise<S
 
   const published = await loadPublishedSource();
   const draft = readLocalDraft();
-  const publishedCached = readLocalPublished();
+  const publishedCached = isBase44PublishAvailable() ? null : readLocalPublished();
   const remotePublished = published ?? publishedCached;
 
   if (options.preferDraft && draft) {
@@ -47,12 +47,20 @@ export async function loadSiteDocument(options: LoadSiteOptions = {}): Promise<S
 
 async function loadPublishedSource(): Promise<SiteDocument | null> {
   // Base44 SiteContent is the visitor-facing source of truth.
-  const fromBase44 = await loadPublishedSiteDocument();
-  if (fromBase44) return fromBase44;
+  if (isBase44PublishAvailable()) {
+    const fromBase44 = await loadPublishedSiteDocument();
+    if (fromBase44) return fromBase44;
+    // Avoid showing stale data from older stores when Base44 is expected.
+    return null;
+  }
 
   if (isSupabaseConfigured) {
-    const fromDb = await loadFromSupabase();
-    if (fromDb) return fromDb;
+    try {
+      const fromDb = await loadFromSupabase();
+      if (fromDb) return fromDb;
+    } catch (err) {
+      console.warn("[CMS] Failed to load published site from Supabase:", err);
+    }
   }
 
   return null;
