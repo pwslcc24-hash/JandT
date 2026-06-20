@@ -275,12 +275,6 @@
   overflow: hidden;
   background: #2a2a2a;
   position: relative;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 3px 8px rgba(0, 0, 0, 0.03);
-  transition: box-shadow 0.3s ease;
-}
-
-.media-stack-cell:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 6px 14px rgba(0, 0, 0, 0.05);
 }
 
 .media-stack-cell--editable {
@@ -816,13 +810,11 @@
   justify-content: flex-end;
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {
   transform: scale(1.02);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10), 0 8px 20px rgba(0, 0, 0, 0.06);
 }
 
 .card:hover {
@@ -1048,12 +1040,6 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
-  transition: box-shadow 0.2s ease;
-}
-
-.gallery-editor-btn:hover:not(:disabled) {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
 }
 
 .gallery-editor-btn:disabled {
@@ -1065,7 +1051,6 @@
   border-color: var(--color-border-tertiary);
   background: var(--color-background-secondary);
   color: var(--color-text-primary);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .gallery-editor-hint {
@@ -1215,12 +1200,6 @@
   overflow: hidden;
   background: #2a2a2a;
   position: relative;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 3px 8px rgba(0, 0, 0, 0.03);
-  transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.gallery-cell:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 6px 14px rgba(0, 0, 0, 0.05);
 }
 
 .gallery-cell-wrap--tall .gallery-cell {
