@@ -300,7 +300,8 @@ export async function uploadMedia(
   clientId: string
 ): Promise<MediaAsset> {
   const isVideo = file.type.startsWith("video/") || /\.(mp4|mov|webm|m4v|avi|mkv)$/i.test(file.name);
-  const uploadBlob = isVideo
+  const isPsd = file.type === "image/vnd.adobe.photoshop" || /\.psd$/i.test(file.name);
+  const uploadBlob = isVideo || isPsd
     ? file
     : await imageCompression(file, {
         maxSizeMB: 1.5,
