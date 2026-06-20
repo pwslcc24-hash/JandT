@@ -53,7 +53,14 @@ export function createDefaultSiteDocument(): SiteDocument {
                 items: [
                   { slug: "info", label: "Info", icon: "calendar" },
                   { slug: "story", label: "Our story", icon: "heart" },
-                  { slug: "photos", label: "Photos", icon: "photo" },
+                  {
+                    slug: "photos",
+                    label: "Photos",
+                    icon: "photo",
+                    mediaUrl:
+                      "https://base44.app/api/apps/6a2b01575fdcdc3d21540f60/files/mp/public/6a2b01575fdcdc3d21540f60/b7eb8d0e3_1781906161340-TaylorJayden-118.jpeg",
+                    mediaType: "image",
+                  },
                   { slug: "registry", label: "Venmo/ Registry", icon: "gift" },
                 ],
               }),

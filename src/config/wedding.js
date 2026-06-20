@@ -43,6 +43,9 @@ export const wedding = {
       label: "Photos",
       icon: "photo",
       title: "Photos",
+      mediaUrl:
+        "https://base44.app/api/apps/6a2b01575fdcdc3d21540f60/files/mp/public/6a2b01575fdcdc3d21540f60/b7eb8d0e3_1781906161340-TaylorJayden-118.jpeg",
+      mediaType: "image",
       body: [
         "Engagement photos and wedding gallery will live here.",
         "Add your image URLs in src/config/wedding.js when ready.",

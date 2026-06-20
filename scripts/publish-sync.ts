@@ -99,6 +99,10 @@ async function main() {
 
     syncPageSection(pubPage, defPage as Page, "content");
 
+    if (defPage.slug === "home") {
+      syncPageSection(pubPage, defPage as Page, "explore");
+    }
+
     if (defPage.slug === "story") {
       syncPageSection(pubPage, defPage as Page, "media");
     }
