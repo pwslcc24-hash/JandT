@@ -49,6 +49,7 @@ function extensionFromMime(mime: string): string {
   if (mime.includes("mp4")) return "mp4";
   if (mime.includes("webm")) return "webm";
   if (mime.includes("quicktime") || mime.includes("mov")) return "mov";
+  if (mime.includes("photoshop") || mime.includes("psd")) return "psd";
   return "bin";
 }
 
