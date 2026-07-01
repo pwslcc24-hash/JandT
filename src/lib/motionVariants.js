@@ -1,5 +1,6 @@
-// Shared motion variants — matches the menu card spring physics
-// Menu: spring damping:26 stiffness:280, items: ease [0.16,1,0.3,1]
+// Shared motion variants
+// Rule: everything waterfalls DOWN and to the RIGHT.
+// Menu spring physics: damping:26 stiffness:280
 
 export const SPRING = { type: "spring", damping: 26, stiffness: 280 };
 export const EASE = [0.16, 1, 0.3, 1];
@@ -9,25 +10,15 @@ export const pageContainer = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.08,
+      staggerChildren: 0.1,
       delayChildren: 0.05,
     },
   },
 };
 
-// Generic child: slides up + fades in
-export const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", damping: 26, stiffness: 280 },
-  },
-};
-
-// Heading / title: slides down from above
+// Titles / headings: drop straight down
 export const slideDown = {
-  hidden: { opacity: 0, y: -22 },
+  hidden: { opacity: 0, y: -28 },
   visible: {
     opacity: 1,
     y: 0,
@@ -35,18 +26,38 @@ export const slideDown = {
   },
 };
 
-// Horizontal rule / horizontal line: slides in from right
-export const slideInRight = {
-  hidden: { opacity: 0, x: 48, scaleX: 0.6 },
+// Body text / generic content: drops down and drifts right
+export const fadeUp = {
+  hidden: { opacity: 0, y: -20, x: -16 },
   visible: {
     opacity: 1,
+    y: 0,
     x: 0,
+    transition: { type: "spring", damping: 26, stiffness: 280 },
+  },
+};
+
+// Boxes / cards / photos: drop down from above
+export const dropIn = {
+  hidden: { opacity: 0, y: -24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", damping: 26, stiffness: 280 },
+  },
+};
+
+// Horizontal lines: sweep in from left to right
+export const slideInRight = {
+  hidden: { opacity: 0, scaleX: 0, originX: 0 },
+  visible: {
+    opacity: 1,
     scaleX: 1,
     transition: { type: "spring", damping: 26, stiffness: 280 },
   },
 };
 
-// Vertical line: grows downward
+// Vertical lines: grow downward from top
 export const slideDownLine = {
   hidden: { opacity: 0, scaleY: 0, originY: 0 },
   visible: {

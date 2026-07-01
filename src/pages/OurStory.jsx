@@ -2,6 +2,9 @@ import { motion } from "framer-motion";
 import PageChrome from "@/components/wedding/PageChrome";
 import { slideDown } from "@/lib/motionVariants";
 
+const SP = { type: "spring", damping: 26, stiffness: 280 };
+const vp = { once: true, margin: "-60px" };
+
 const STORY_SECTIONS = [
   {
     title: "A Lot Had to Happen",
@@ -180,12 +183,7 @@ function MediaPlaceholder({ type, size }) {
   const icon = type === "photo" ? "🖼" : "▶";
   const label = type === "photo" ? "Photo" : "Video";
   return (
-    <div
-      style={{
-        ...styles.mediaBoxBase,
-        minHeight: size === "tall" ? 220 : 160,
-      }}
-    >
+    <div style={{ ...styles.mediaBoxBase, minHeight: size === "tall" ? 220 : 160 }}>
       <span style={styles.mediaIcon} aria-hidden="true">{icon}</span>
       <span style={styles.mediaLabel}>{label}</span>
     </div>
@@ -206,30 +204,26 @@ export default function OurStory() {
         <motion.h1 style={styles.pageTitle} variants={slideDown}>Our Story</motion.h1>
 
         {STORY_SECTIONS.map((section, index) => (
-          <motion.section
-            key={section.title}
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ type: "spring", damping: 26, stiffness: 280 }}
-          >
+          <motion.section key={section.title}>
+            {/* Heading: drops straight down */}
             <motion.h2
               style={styles.sectionHeading}
-              initial={{ opacity: 0, y: -18 }}
+              initial={{ opacity: 0, y: -22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ type: "spring", damping: 26, stiffness: 280, delay: 0.06 }}
+              viewport={vp}
+              transition={{ ...SP }}
             >
               {section.title}
             </motion.h2>
 
+            {/* Body text: drops down and drifts right */}
             <motion.div
               className="os-body-grid"
               style={styles.bodyGrid}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ type: "spring", damping: 26, stiffness: 280, delay: 0.12 }}
+              initial={{ opacity: 0, y: -18, x: -14 }}
+              whileInView={{ opacity: 1, y: 0, x: 0 }}
+              viewport={vp}
+              transition={{ ...SP, delay: 0.08 }}
             >
               <div>
                 <p style={styles.povLabel}>JAYDEN</p>
@@ -241,27 +235,32 @@ export default function OurStory() {
               </div>
             </motion.div>
 
+            {/* Media boxes: each drops down in sequence */}
             {section.media.length > 0 && (
-              <motion.div
-                style={styles.mediaRow}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ type: "spring", damping: 26, stiffness: 280, delay: 0.18 }}
-              >
+              <div style={styles.mediaRow}>
                 {section.media.map((item, i) => (
-                  <MediaPlaceholder key={i} type={item.type} size={item.size} />
+                  <motion.div
+                    key={i}
+                    style={{ flex: 1, minWidth: 140 }}
+                    initial={{ opacity: 0, y: -20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={vp}
+                    transition={{ ...SP, delay: 0.1 + i * 0.08 }}
+                  >
+                    <MediaPlaceholder type={item.type} size={item.size} />
+                  </motion.div>
                 ))}
-              </motion.div>
+              </div>
             )}
 
+            {/* Horizontal rule: sweeps left → right */}
             {index < STORY_SECTIONS.length - 1 && (
               <motion.hr
-                style={styles.rule}
-                initial={{ opacity: 0, scaleX: 0.5, x: 40 }}
-                whileInView={{ opacity: 1, scaleX: 1, x: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ type: "spring", damping: 26, stiffness: 280, delay: 0.22 }}
+                style={{ ...styles.rule, transformOrigin: "left" }}
+                initial={{ opacity: 0, scaleX: 0 }}
+                whileInView={{ opacity: 1, scaleX: 1 }}
+                viewport={vp}
+                transition={{ ...SP, delay: 0.14 }}
               />
             )}
           </motion.section>
