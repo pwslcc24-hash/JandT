@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import PageChrome from "@/components/wedding/PageChrome";
 import { slideDown } from "@/lib/motionVariants";
+import EditableMedia from "@/components/editor/EditableMedia";
 
 const SP = { type: "spring", damping: 26, stiffness: 280 };
 const vp = { once: true, margin: "-60px" };
@@ -179,14 +180,26 @@ const styles = {
   },
 };
 
-function MediaPlaceholder({ type, size }) {
+function StoryMedia({ sectionSlug, index, type, size }) {
+  const minHeight = size === "tall" ? 220 : 160;
   const icon = type === "photo" ? "🖼" : "▶";
   const label = type === "photo" ? "Photo" : "Video";
   return (
-    <div style={{ ...styles.mediaBoxBase, minHeight: size === "tall" ? 220 : 160 }}>
-      <span style={styles.mediaIcon} aria-hidden="true">{icon}</span>
-      <span style={styles.mediaLabel}>{label}</span>
-    </div>
+    <EditableMedia
+      pageSlug="story"
+      sectionKey={sectionSlug}
+      blockKey={`media-${index}`}
+      fallbackType={type === "photo" ? "image" : "video"}
+      variant="inline"
+      className="w-full"
+      mediaClassName="w-full h-full object-cover"
+    >
+      {/* shown when no media uploaded yet */}
+      <div style={{ ...styles.mediaBoxBase, minHeight }}>
+        <span style={styles.mediaIcon} aria-hidden="true">{icon}</span>
+        <span style={styles.mediaLabel}>{label}</span>
+      </div>
+    </EditableMedia>
   );
 }
 
@@ -241,13 +254,18 @@ export default function OurStory() {
                 {section.media.map((item, i) => (
                   <motion.div
                     key={i}
-                    style={{ flex: 1, minWidth: 140 }}
+                    style={{ flex: 1, minWidth: 140, minHeight: item.size === "tall" ? 220 : 160 }}
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={vp}
                     transition={{ ...SP, delay: 0.1 + i * 0.08 }}
                   >
-                    <MediaPlaceholder type={item.type} size={item.size} />
+                    <StoryMedia
+                      sectionSlug={section.title.replace(/[^a-z0-9]/gi, "-").toLowerCase()}
+                      index={i}
+                      type={item.type}
+                      size={item.size}
+                    />
                   </motion.div>
                 ))}
               </div>
