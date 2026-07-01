@@ -1,5 +1,6 @@
 import { Navigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { pageContainer, slideDown, fadeUp } from "@/lib/motionVariants";
 import { getNavBySlug } from "@/config/wedding";
 import PageChrome from "@/components/wedding/PageChrome";
 import PhotoAlbumList from "@/components/wedding/PhotoAlbumList";
@@ -22,9 +23,9 @@ export default function WeddingSection() {
   return (
     <PageChrome>
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        variants={pageContainer}
+        initial="hidden"
+        animate="visible"
       >
         {isPhotos ? (
           <>
@@ -34,7 +35,8 @@ export default function WeddingSection() {
               blockKey="photos-title"
               fallback={section.title}
               className="section-title section-title--photos"
-              as="h1"
+              as={motion.h1}
+              variants={slideDown}
             />
             <PhotoAlbumList albums={photoAlbums} />
           </>
@@ -46,7 +48,8 @@ export default function WeddingSection() {
               blockKey="title"
               fallback={pageContent.title || section.title}
               className="section-title"
-              as="h1"
+              as={motion.h1}
+              variants={slideDown}
             />
             <EditableRichText
               pageSlug={slug}

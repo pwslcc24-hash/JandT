@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { pageContainer } from "@/lib/motionVariants";
 import SideMenu from "./SideMenu";
 import { WeddingIcon } from "./icons";
 
@@ -29,7 +31,14 @@ export default function PageChrome({ children, backTo = "/#explore" }) {
         </button>
       </header>
 
-      <div className="section-page-inner">{children}</div>
+      <motion.div
+        className="section-page-inner"
+        variants={pageContainer}
+        initial="hidden"
+        animate="visible"
+      >
+        {children}
+      </motion.div>
 
       <SideMenu
         open={menuOpen}

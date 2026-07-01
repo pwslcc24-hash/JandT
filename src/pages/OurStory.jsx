@@ -1,4 +1,6 @@
+import { motion } from "framer-motion";
 import PageChrome from "@/components/wedding/PageChrome";
+import { pageContainer, slideDown, fadeUp, slideInRight } from "@/lib/motionVariants";
 
 const STORY_SECTIONS = [
   {
@@ -199,14 +201,14 @@ export default function OurStory() {
           .os-body-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-      <div className="os-wrap">
-        <h1 style={styles.pageTitle}>Our Story</h1>
+      <motion.div className="os-wrap" variants={pageContainer} initial="hidden" animate="visible">
+        <motion.h1 style={styles.pageTitle} variants={slideDown}>Our Story</motion.h1>
 
         {STORY_SECTIONS.map((section, index) => (
-          <section key={section.title}>
-            <h2 style={styles.sectionHeading}>{section.title}</h2>
+          <motion.section key={section.title} variants={fadeUp}>
+            <motion.h2 style={styles.sectionHeading} variants={slideDown}>{section.title}</motion.h2>
 
-            <div className="os-body-grid" style={styles.bodyGrid}>
+            <motion.div className="os-body-grid" style={styles.bodyGrid} variants={fadeUp}>
               <div>
                 <p style={styles.povLabel}>JAYDEN</p>
                 <p style={styles.bodyText}>{section.jayden}</p>
@@ -215,20 +217,22 @@ export default function OurStory() {
                 <p style={styles.povLabel}>TAYLOR</p>
                 <p style={styles.bodyText}>{section.taylor}</p>
               </div>
-            </div>
+            </motion.div>
 
             {section.media.length > 0 && (
-              <div style={styles.mediaRow}>
+              <motion.div style={styles.mediaRow} variants={fadeUp}>
                 {section.media.map((item, i) => (
                   <MediaPlaceholder key={i} type={item.type} size={item.size} />
                 ))}
-              </div>
+              </motion.div>
             )}
 
-            {index < STORY_SECTIONS.length - 1 && <hr style={styles.rule} />}
-          </section>
+            {index < STORY_SECTIONS.length - 1 && (
+              <motion.hr style={styles.rule} variants={slideInRight} />
+            )}
+          </motion.section>
         ))}
-      </div>
+      </motion.div>
     </PageChrome>
   );
 }
