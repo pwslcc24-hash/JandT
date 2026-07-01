@@ -1,3 +1,5 @@
+import PageChrome from "@/components/wedding/PageChrome";
+
 const STORY_SECTIONS = [
   {
     title: "A Lot Had to Happen",
@@ -190,42 +192,40 @@ function MediaPlaceholder({ type, size }) {
 
 export default function OurStory() {
   return (
-    <main style={styles.page}>
+    <PageChrome>
       <style>{`
         @media (max-width: 520px) {
           .os-body-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-      <div style={styles.content}>
-        <h1 style={styles.pageTitle}>Our Story</h1>
+      <h1 style={styles.pageTitle}>Our Story</h1>
 
-        {STORY_SECTIONS.map((section, index) => (
-          <section key={section.title}>
-            <h2 style={styles.sectionHeading}>{section.title}</h2>
+      {STORY_SECTIONS.map((section, index) => (
+        <section key={section.title}>
+          <h2 style={styles.sectionHeading}>{section.title}</h2>
 
-            <div className="os-body-grid" style={styles.bodyGrid}>
-              <div>
-                <p style={styles.povLabel}>JAYDEN</p>
-                <p style={styles.bodyText}>{section.jayden}</p>
-              </div>
-              <div>
-                <p style={styles.povLabel}>TAYLOR</p>
-                <p style={styles.bodyText}>{section.taylor}</p>
-              </div>
+          <div className="os-body-grid" style={styles.bodyGrid}>
+            <div>
+              <p style={styles.povLabel}>JAYDEN</p>
+              <p style={styles.bodyText}>{section.jayden}</p>
             </div>
+            <div>
+              <p style={styles.povLabel}>TAYLOR</p>
+              <p style={styles.bodyText}>{section.taylor}</p>
+            </div>
+          </div>
 
-            {section.media.length > 0 && (
-              <div style={styles.mediaRow}>
-                {section.media.map((item, i) => (
-                  <MediaPlaceholder key={i} type={item.type} size={item.size} />
-                ))}
-              </div>
-            )}
+          {section.media.length > 0 && (
+            <div style={styles.mediaRow}>
+              {section.media.map((item, i) => (
+                <MediaPlaceholder key={i} type={item.type} size={item.size} />
+              ))}
+            </div>
+          )}
 
-            {index < STORY_SECTIONS.length - 1 && <hr style={styles.rule} />}
-          </section>
-        ))}
-      </div>
-    </main>
+          {index < STORY_SECTIONS.length - 1 && <hr style={styles.rule} />}
+        </section>
+      ))}
+    </PageChrome>
   );
 }
