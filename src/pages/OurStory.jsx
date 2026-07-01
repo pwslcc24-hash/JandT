@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import PageChrome from "@/components/wedding/PageChrome";
-import { pageContainer, slideDown, fadeUp, slideInRight } from "@/lib/motionVariants";
+import { slideDown } from "@/lib/motionVariants";
 
 const STORY_SECTIONS = [
   {
@@ -201,14 +201,36 @@ export default function OurStory() {
           .os-body-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-      <motion.div className="os-wrap" variants={pageContainer} initial="hidden" animate="visible">
+      <div className="os-wrap">
+        {/* Page title animates in with the chrome stagger */}
         <motion.h1 style={styles.pageTitle} variants={slideDown}>Our Story</motion.h1>
 
         {STORY_SECTIONS.map((section, index) => (
-          <motion.section key={section.title} variants={fadeUp}>
-            <motion.h2 style={styles.sectionHeading} variants={slideDown}>{section.title}</motion.h2>
+          <motion.section
+            key={section.title}
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ type: "spring", damping: 26, stiffness: 280 }}
+          >
+            <motion.h2
+              style={styles.sectionHeading}
+              initial={{ opacity: 0, y: -18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ type: "spring", damping: 26, stiffness: 280, delay: 0.06 }}
+            >
+              {section.title}
+            </motion.h2>
 
-            <motion.div className="os-body-grid" style={styles.bodyGrid} variants={fadeUp}>
+            <motion.div
+              className="os-body-grid"
+              style={styles.bodyGrid}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ type: "spring", damping: 26, stiffness: 280, delay: 0.12 }}
+            >
               <div>
                 <p style={styles.povLabel}>JAYDEN</p>
                 <p style={styles.bodyText}>{section.jayden}</p>
@@ -220,7 +242,13 @@ export default function OurStory() {
             </motion.div>
 
             {section.media.length > 0 && (
-              <motion.div style={styles.mediaRow} variants={fadeUp}>
+              <motion.div
+                style={styles.mediaRow}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ type: "spring", damping: 26, stiffness: 280, delay: 0.18 }}
+              >
                 {section.media.map((item, i) => (
                   <MediaPlaceholder key={i} type={item.type} size={item.size} />
                 ))}
@@ -228,11 +256,17 @@ export default function OurStory() {
             )}
 
             {index < STORY_SECTIONS.length - 1 && (
-              <motion.hr style={styles.rule} variants={slideInRight} />
+              <motion.hr
+                style={styles.rule}
+                initial={{ opacity: 0, scaleX: 0.5, x: 40 }}
+                whileInView={{ opacity: 1, scaleX: 1, x: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ type: "spring", damping: 26, stiffness: 280, delay: 0.22 }}
+              />
             )}
           </motion.section>
         ))}
-      </motion.div>
+      </div>
     </PageChrome>
   );
 }

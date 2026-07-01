@@ -1,6 +1,6 @@
 import { Navigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { pageContainer, slideDown, fadeUp } from "@/lib/motionVariants";
+import { slideDown, fadeUp } from "@/lib/motionVariants";
 import { getNavBySlug } from "@/config/wedding";
 import PageChrome from "@/components/wedding/PageChrome";
 import PhotoAlbumList from "@/components/wedding/PhotoAlbumList";
@@ -22,35 +22,33 @@ export default function WeddingSection() {
 
   return (
     <PageChrome>
-      <motion.div
-        variants={pageContainer}
-        initial="hidden"
-        animate="visible"
-      >
-        {isPhotos ? (
-          <>
-            <EditableText
-              pageSlug="photos"
-              sectionKey="photo-albums"
-              blockKey="photos-title"
-              fallback={section.title}
-              className="section-title section-title--photos"
-              as={motion.h1}
-              variants={slideDown}
-            />
+      {isPhotos ? (
+        <>
+          <EditableText
+            pageSlug="photos"
+            sectionKey="photo-albums"
+            blockKey="photos-title"
+            fallback={section.title}
+            className="section-title section-title--photos"
+            as={motion.h1}
+            variants={slideDown}
+          />
+          <motion.div variants={fadeUp}>
             <PhotoAlbumList albums={photoAlbums} />
-          </>
-        ) : (
-          <>
-            <EditableText
-              pageSlug={slug}
-              sectionKey="content"
-              blockKey="title"
-              fallback={pageContent.title || section.title}
-              className="section-title"
-              as={motion.h1}
-              variants={slideDown}
-            />
+          </motion.div>
+        </>
+      ) : (
+        <>
+          <EditableText
+            pageSlug={slug}
+            sectionKey="content"
+            blockKey="title"
+            fallback={pageContent.title || section.title}
+            className="section-title"
+            as={motion.h1}
+            variants={slideDown}
+          />
+          <motion.div variants={fadeUp}>
             <EditableRichText
               pageSlug={slug}
               sectionKey="content"
@@ -65,9 +63,9 @@ export default function WeddingSection() {
               }
             />
             <EditableMediaStack pageSlug={slug} />
-          </>
-        )}
-      </motion.div>
+          </motion.div>
+        </>
+      )}
     </PageChrome>
   );
 }

@@ -1,6 +1,6 @@
 import { Navigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { pageContainer, slideDown, fadeUp } from "@/lib/motionVariants";
+import { slideDown, fadeUp } from "@/lib/motionVariants";
 import { getPhotoAlbum } from "@/config/wedding";
 import PageChrome from "@/components/wedding/PageChrome";
 import EditableText from "@/components/editor/EditableText";
@@ -17,12 +17,8 @@ export default function WeddingGallery() {
 
   return (
     <PageChrome backTo="/photos">
-      <motion.div
-        variants={pageContainer}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.h1 className="section-title" variants={slideDown}>{album.label}</motion.h1>
+      <motion.h1 className="section-title" variants={slideDown}>{album.label}</motion.h1>
+      <motion.div variants={fadeUp}>
         <EditableGallery albumSlug={album.slug} album={album} />
       </motion.div>
     </PageChrome>
