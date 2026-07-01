@@ -24,7 +24,7 @@ const STORY_SECTIONS = [
       "On a warm late summer evening at a school kick off party at the Quad. I was with some of the few people I knew on the team. Because of complications in the transferring process, I was ineligible to compete so I had missed cross-country camp and all the team building and getting to know each other at meetings. When my friends introduced me to a group of girls as the ineligible kid. That's where I met Taylor.",
     taylor:
       "I had gone to cross country camp, moved in, and already had been practicing with the team when I first met Jayden. A few weeks into school, my roommates and I went to a back-to-school activity on the Quad. We ran into some of the guys from the team, and they introduced us to Jayden, who wasn't eligible to compete yet.",
-    media: [{ type: "video", size: "tall" }],
+    media: [{ type: "photo", size: "tall" }],
   },
   {
     title: '"TAYLOR!"',
@@ -43,8 +43,8 @@ const STORY_SECTIONS = [
     taylor:
       'After that, we walked home from biology almost every day. One day as we were walking home together, my roommate saw me with him and texted me "Oooh Taylor walking with a boy," to which I responded, "Hahha it\'s just Jayden." We started studying together, making flashcards, and spending more and more time together. He made me laugh and smile. I loved that he could draw and had good handwriting. But I think I was trying to convince myself that I didn\'t like him because I had gone into college not really wanting to date. One day, I mentioned that I needed to clean my apartment\'s kitchen, and he offered to help. I told my brother later, and he said, "No guy would do that if he doesn\'t like the girl." I didn\'t believe him. I thought Jayden was just a genuinely kind person. I also started giving him car rides to places because his car was broken, so we spent a lot of time together because of that.',
     media: [
-      { type: "video", size: "tall" },
-      { type: "video", size: "tall" },
+      { type: "photo", size: "tall" },
+      { type: "photo", size: "tall" },
     ],
   },
   {
@@ -54,7 +54,7 @@ const STORY_SECTIONS = [
       "I eventually hosted a karaoke and Just Dance party because I wanted her to come. Afterward, we all went to In-N-Out, where I taught her salsa dancing in the middle of the restaurant. Then we sat on a table together drinking soda water with lemons and pretending we were in Italy, making up picture book stories, making up rhymes and just talking.",
     taylor:
       "Then he invited me to a party at his house. Afterward, we all went to In-N-Out, and somehow he started teaching me salsa dancing. I remember thinking that maybe he liked me because he seemed hesitant to dance with anyone else. Later that night, we sat on top of a table drinking soda water with lemons and pretended we were in Italy. I went home completely confused.",
-    media: [{ type: "video", size: "tall" }],
+    media: [{ type: "photo", size: "tall" }],
   },
   {
     title: "Melted Ice Cream",
@@ -74,7 +74,7 @@ const STORY_SECTIONS = [
       'Eventually, we moved to another room to read, and somehow we ended up sitting next to each other with his arm around me while I talked about myself. I was super confused because throughout the time we had known each other I thought we were just friends. So I was quite surprised that when I decided it was time to go, he walked me out and gave me a hug. After I left that night, I immediately called my mom. She laughed and said, "I think you probably like him, Taylor." That was the first time I realized that I did.',
     media: [
       { type: "photo", size: "short" },
-      { type: "video", size: "short" },
+      { type: "photo", size: "short" },
       { type: "photo", size: "short" },
     ],
   },
@@ -87,7 +87,7 @@ const STORY_SECTIONS = [
       "A few days later, while he was away for a race, he asked me on a date. He told me it was a surprise. I walked out, excited to see him. There was never any awkwardness or unfamiliarity between us. It felt like I had known him for years. We found pumpkins on the side of a road to carve. He helped me because my artistic skills are terrible. I think I fell in love with him when he made me dinner, though. Food is my love language. He made me steak, bruschetta, chicken, and vegetables. I did the dishes (which is now quite a normal routine for us), and then we watched Tangled on the couch. He knew almost every line of the movie, which I thought was pretty cute. Then he kissed me.",
     media: [
       { type: "photo", size: "tall" },
-      { type: "video", size: "tall" },
+      { type: "photo", size: "tall" },
       { type: "photo", size: "tall" },
     ],
   },

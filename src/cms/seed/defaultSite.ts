@@ -147,16 +147,16 @@ function pageContent(
   ];
 
   if (slug === "story") {
-    // One section per story chapter, each with its media slots as image blocks
+    // One section per story chapter, each with dedicated photo slots.
     const storyMediaSections: typeof sections = [
       mkStorySection("a-lot-had-to-happen", []),
-      mkStorySection("the-quad", ["video"]),
+      mkStorySection("the-quad", ["photo"]),
       mkStorySection("taylor", []),
-      mkStorySection("biology-study-sessions", ["video", "video"]),
-      mkStorySection("in-n-out", ["video"]),
+      mkStorySection("biology-study-sessions", ["photo", "photo"]),
+      mkStorySection("in-n-out", ["photo"]),
       mkStorySection("melted-ice-cream", []),
-      mkStorySection("just-friends", ["photo", "video", "photo"]),
-      mkStorySection("the-first-date", ["photo", "video", "photo"]),
+      mkStorySection("just-friends", ["photo", "photo", "photo"]),
+      mkStorySection("the-first-date", ["photo", "photo", "photo"]),
       mkStorySection("since-then", ["photo"]),
     ];
     sections.push(...storyMediaSections);
