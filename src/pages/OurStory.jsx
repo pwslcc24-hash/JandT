@@ -194,38 +194,41 @@ export default function OurStory() {
   return (
     <PageChrome>
       <style>{`
+        .os-wrap, .os-wrap * { font-family: 'Times New Roman', Times, serif !important; }
         @media (max-width: 520px) {
           .os-body-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-      <h1 style={styles.pageTitle}>Our Story</h1>
+      <div className="os-wrap">
+        <h1 style={styles.pageTitle}>Our Story</h1>
 
-      {STORY_SECTIONS.map((section, index) => (
-        <section key={section.title}>
-          <h2 style={styles.sectionHeading}>{section.title}</h2>
+        {STORY_SECTIONS.map((section, index) => (
+          <section key={section.title}>
+            <h2 style={styles.sectionHeading}>{section.title}</h2>
 
-          <div className="os-body-grid" style={styles.bodyGrid}>
-            <div>
-              <p style={styles.povLabel}>JAYDEN</p>
-              <p style={styles.bodyText}>{section.jayden}</p>
+            <div className="os-body-grid" style={styles.bodyGrid}>
+              <div>
+                <p style={styles.povLabel}>JAYDEN</p>
+                <p style={styles.bodyText}>{section.jayden}</p>
+              </div>
+              <div>
+                <p style={styles.povLabel}>TAYLOR</p>
+                <p style={styles.bodyText}>{section.taylor}</p>
+              </div>
             </div>
-            <div>
-              <p style={styles.povLabel}>TAYLOR</p>
-              <p style={styles.bodyText}>{section.taylor}</p>
-            </div>
-          </div>
 
-          {section.media.length > 0 && (
-            <div style={styles.mediaRow}>
-              {section.media.map((item, i) => (
-                <MediaPlaceholder key={i} type={item.type} size={item.size} />
-              ))}
-            </div>
-          )}
+            {section.media.length > 0 && (
+              <div style={styles.mediaRow}>
+                {section.media.map((item, i) => (
+                  <MediaPlaceholder key={i} type={item.type} size={item.size} />
+                ))}
+              </div>
+            )}
 
-          {index < STORY_SECTIONS.length - 1 && <hr style={styles.rule} />}
-        </section>
-      ))}
+            {index < STORY_SECTIONS.length - 1 && <hr style={styles.rule} />}
+          </section>
+        ))}
+      </div>
     </PageChrome>
   );
 }
