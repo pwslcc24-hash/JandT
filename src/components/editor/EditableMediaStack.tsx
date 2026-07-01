@@ -19,10 +19,12 @@ import { uploadMedia } from "@/cms/api/content";
 import { getJson } from "@/cms/seed/defaultSite";
 import {
   bringForward,
+  isMediaFile,
   mediaKindFromFile,
   normalizeMediaItem,
   sendBackward,
   sortByLayer,
+  type GalleryTileSize,
   type MediaItem,
 } from "@/cms/mediaTypes";
 import { cn } from "@/lib/utils";
@@ -35,6 +37,12 @@ interface EditableMediaStackProps {
   pageSlug: string;
 }
 
+const STACK_SIZE_OPTIONS: Array<{ value: GalleryTileSize; label: string }> = [
+  { value: "small", label: "S" },
+  { value: "wide", label: "M" },
+  { value: "large", label: "L" },
+];
+
 function StackCell({
   item,
   index,
@@ -44,6 +52,7 @@ function StackCell({
   onPick,
   onLayer,
   onRemove,
+  onResize,
 }: {
   item: MediaItem;
   index: number;
@@ -53,6 +62,7 @@ function StackCell({
   onPick: (index: number) => void;
   onLayer: (index: number, dir: "front" | "back") => void;
   onRemove: (index: number) => void;
+  onResize: (index: number, size: GalleryTileSize) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `stack-${index}`,
@@ -69,7 +79,11 @@ function StackCell({
     <div
       ref={setNodeRef}
       style={style}
-      className={cn("media-stack-item", isDragging && "media-stack-item--dragging")}
+      className={cn(
+        "media-stack-item",
+        `media-stack-item--${item.tileSize ?? "small"}`,
+        isDragging && "media-stack-item--dragging"
+      )}
     >
       <div
         className={cn("media-stack-cell", editable && "media-stack-cell--editable")}
@@ -101,7 +115,27 @@ function StackCell({
               onBringFront={() => onLayer(index, "front")}
               onSendBack={() => onLayer(index, "back")}
               onRemove={() => onRemove(index)}
-            />
+            >
+              <div className="gallery-size-controls">
+                {STACK_SIZE_OPTIONS.map((option) => (
+                  <button
+                    key={`${index}-${option.value}`}
+                    type="button"
+                    className={cn(
+                      "gallery-size-btn",
+                      item.tileSize === option.value && "gallery-size-btn--active"
+                    )}
+                    title={`Resize to ${option.value}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onResize(index, option.value);
+                    }}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </MediaEditToolbar>
           </>
         )}
       </div>
@@ -114,6 +148,7 @@ export default function EditableMediaStack({ pageSlug }: EditableMediaStackProps
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
+  const [error, setError] = useState<string>("");
   const editable = editMode && isAdmin;
 
   const fallback = { items: [] as MediaItem[] };
@@ -132,7 +167,12 @@ export default function EditableMediaStack({ pageSlug }: EditableMediaStackProps
 
   const handleFile = async (file: File, index: number) => {
     if (!site || !file) return;
+    if (!isMediaFile(file)) {
+      setError("Please choose an image or video file.");
+      return;
+    }
     setUploading(true);
+    setError("");
     try {
       const asset = await uploadMedia(file, site.clientId);
       const next = [...items];
@@ -141,8 +181,11 @@ export default function EditableMediaStack({ pageSlug }: EditableMediaStackProps
         alt: file.name,
         type: mediaKindFromFile(file),
         zIndex: next[index]?.zIndex ?? index + 1,
+        tileSize: next[index]?.tileSize ?? "small",
       };
       saveItems(next);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed. Please try again.");
     } finally {
       setUploading(false);
       setTargetIndex(null);
@@ -152,7 +195,7 @@ export default function EditableMediaStack({ pageSlug }: EditableMediaStackProps
   const addItem = () => {
     saveItems([
       ...items,
-      { src: "", alt: "", type: "image", zIndex: items.length + 1 },
+      { src: "", alt: "", type: "image", zIndex: items.length + 1, tileSize: "small" },
     ]);
   };
 
@@ -163,6 +206,10 @@ export default function EditableMediaStack({ pageSlug }: EditableMediaStackProps
   const layerItem = (index: number, dir: "front" | "back") => {
     const next = dir === "front" ? bringForward(items, index) : sendBackward(items, index);
     saveItems(next);
+  };
+
+  const resizeItem = (index: number, size: GalleryTileSize) => {
+    saveItems(items.map((item, i) => (i === index ? { ...item, tileSize: size } : item)));
   };
 
   const sensors = useSensors(
@@ -200,6 +247,7 @@ export default function EditableMediaStack({ pageSlug }: EditableMediaStackProps
       }}
       onLayer={layerItem}
       onRemove={removeItem}
+      onResize={resizeItem}
     />
   ));
 
@@ -210,6 +258,7 @@ export default function EditableMediaStack({ pageSlug }: EditableMediaStackProps
           Drag to reposition · Front / Back controls layer order · Tap to upload photos or videos
         </p>
       )}
+      {error && <p className="gallery-upload-error">{error}</p>}
       <div className="media-stack-canvas">
         {editable ? (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>

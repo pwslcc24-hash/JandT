@@ -269,6 +269,22 @@
   flex-shrink: 0;
 }
 
+.media-stack-item--small {
+  width: min(240px, 42%);
+}
+
+.media-stack-item--wide {
+  width: min(320px, 58%);
+}
+
+.media-stack-item--large {
+  width: min(390px, 70%);
+}
+
+.media-stack-item--dragging {
+  opacity: 0.85;
+}
+
 .media-stack-cell {
   aspect-ratio: 4 / 5;
   border-radius: var(--border-radius-md);

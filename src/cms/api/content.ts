@@ -16,6 +16,7 @@ const LOCAL_PUBLISHED_KEY = "cms_site_published";
 const PUBLISHED_AT_KEY = "cms_published_at";
 const LEGACY_LOCAL_KEY = "cms_site_document";
 const CLIENT_SLUG = import.meta.env.VITE_CLIENT_SLUG || "holdsworth";
+const LOCAL_VIDEO_MAX_MB = 80;
 
 export interface LoadSiteOptions {
   preferDraft?: boolean;
@@ -309,8 +310,15 @@ export async function uploadMedia(
         useWebWorker: true,
       });
 
-  if (!isSupabaseConfigured && isVideo && uploadBlob.size > 15 * 1024 * 1024) {
-    throw new Error("Video is too large for local save (max 15MB). Use a shorter clip or compress it.");
+  if (
+    !isSupabaseConfigured &&
+    !isBase44PublishAvailable() &&
+    isVideo &&
+    uploadBlob.size > LOCAL_VIDEO_MAX_MB * 1024 * 1024
+  ) {
+    throw new Error(
+      `Video is too large for local save (max ${LOCAL_VIDEO_MAX_MB}MB). Use a shorter clip or compress it.`
+    );
   }
 
   const fileName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;

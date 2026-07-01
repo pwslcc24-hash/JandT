@@ -67,13 +67,15 @@ export default function EditorToolbar() {
               "editor-toolbar-btn editor-toolbar-btn--save-live",
               publishStatus === "published" && "active"
             )}
-            disabled={publishStatus === "publishing"}
+            disabled={publishStatus === "publishing" || saveStatus === "saving"}
             onClick={() => publishSite()}
             title="Save changes live for all visitors"
           >
             <CloudUpload size={16} />
             {publishStatus === "publishing"
               ? "Saving live…"
+              : saveStatus === "saving"
+                ? "Finishing draft…"
               : publishStatus === "published"
                 ? "Saved live!"
                 : "Save Live"}
