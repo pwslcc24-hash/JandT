@@ -158,6 +158,7 @@ const styles = {
     flexWrap: "wrap",
     gap: 12,
     marginBottom: "2.75rem",
+    justifyContent: "center",
   },
   mediaBoxBase: {
     flex: 1,
