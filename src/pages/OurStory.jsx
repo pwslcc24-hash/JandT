@@ -16,11 +16,11 @@ const STORY_SECTIONS = [
     media: [{ type: "video", size: "tall" }],
   },
   {
-    title: "\"TAYLOR!\"",
+    title: '"TAYLOR!"',
     jayden:
-      "The next day, leaving biology class, I saw her across the lecture hall and yelled \"TAYLOR!\" I walked over and asked, \"That's your name, right?\" 😏and hit her with something like \"I like gold arm band\" 😉 We ended up walking back toward my car and her apartment. We were both new to campus and she was a little lost, so I confidently led us in the wrong way while we talked and laughed the whole way.",
+      'The next day, leaving biology class, I saw her across the lecture hall and yelled "TAYLOR!" I walked over and asked, "That\'s your name, right?" 😏and hit her with something like "I like gold arm band" 😉 We ended up walking back toward my car and her apartment. We were both new to campus and she was a little lost, so I confidently led us in the wrong way while we talked and laughed the whole way.',
     taylor:
-      "The next day, I heard someone yell my name across biology class as I was leaving, \"TAYLOR!\" I turned around and saw Jayden. He came up and asked, \"That's your name, right?\" We started talking and ended up walking back toward his car and my apartment together.",
+      'The next day, I heard someone yell my name across biology class as I was leaving, "TAYLOR!" I turned around and saw Jayden. He came up and asked, "That\'s your name, right?" We started talking and ended up walking back toward his car and my apartment together.',
     media: [],
   },
   {
@@ -28,7 +28,7 @@ const STORY_SECTIONS = [
     jayden:
       "After that, we started walking together after every class, chatting and laughing. While on our walks she'd tilt her head into my field of vision, stealing my attention away from the ground I was zoned out on. I would even park my car the place I did the first day so I could walk with her… until my car broke down and I got rides from her—which worked out pretty well for me. We started out walking and chatting, then we started sitting next to each other and then we studied together for hours. Wherever we were those big brown eyes would penetrate my soul with the longest maintained eye contact ever. We had the funniest study sessions and inside jokes about biology. I never did so well in a final.",
     taylor:
-      "After that, we walked home from biology almost every day. One day as we were walking home together, my roommate saw me with him and texted me \"Oooh Taylor walking with a boy,\" to which I responded, \"Hahha it's just Jayden.\" We started studying together, making flashcards, and spending more and more time together. He made me laugh and smile. I loved that he could draw and had good handwriting. But I think I was trying to convince myself that I didn't like him because I had gone into college not really wanting to date. One day, I mentioned that I needed to clean my apartment's kitchen, and he offered to help. I told my brother later, and he said, \"No guy would do that if he doesn't like the girl.\" I didn't believe him. I thought Jayden was just a genuinely kind person. I also started giving him car rides to places because his car was broken, so we spent a lot of time together because of that.",
+      'After that, we walked home from biology almost every day. One day as we were walking home together, my roommate saw me with him and texted me "Oooh Taylor walking with a boy," to which I responded, "Hahha it\'s just Jayden." We started studying together, making flashcards, and spending more and more time together. He made me laugh and smile. I loved that he could draw and had good handwriting. But I think I was trying to convince myself that I didn\'t like him because I had gone into college not really wanting to date. One day, I mentioned that I needed to clean my apartment\'s kitchen, and he offered to help. I told my brother later, and he said, "No guy would do that if he doesn\'t like the girl." I didn\'t believe him. I thought Jayden was just a genuinely kind person. I also started giving him car rides to places because his car was broken, so we spent a lot of time together because of that.',
     media: [
       { type: "video", size: "tall" },
       { type: "video", size: "tall" },
@@ -45,17 +45,17 @@ const STORY_SECTIONS = [
   {
     title: "Melted Ice Cream",
     jayden:
-      "After one of our long study sessions, Taylor invited me over for homemade enchiladas. She started helping me read a school assigned book. We would alternate switching who would read and take breaks listening to music and talking. Later, as she was driving me home, my friends called me giving me a hard time about being at the freshmen dorms then asked if I wanted to go out for ice cream. I responded, \"We have ice cream at home.\" I convinced Taylor to come over for said ice cream. Unfortunately our freezer was broken, so we ate fluffy, melted, freezer-burned ice cream out of plastic cups and watched a baseball game where she awkwardly sat on another couch…",
+      'After one of our long study sessions, Taylor invited me over for homemade enchiladas. She started helping me read a school assigned book. We would alternate switching who would read and take breaks listening to music and talking. Later, as she was driving me home, my friends called me giving me a hard time about being at the freshmen dorms then asked if I wanted to go out for ice cream. I responded, "We have ice cream at home." I convinced Taylor to come over for said ice cream. Unfortunately our freezer was broken, so we ate fluffy, melted, freezer-burned ice cream out of plastic cups and watched a baseball game where she awkwardly sat on another couch…',
     taylor:
       "A few days later, we were both super hungry after studying, and I had made homemade enchiladas, so I invited him over. We ate and talked, then I drove him home because his car was broken. His friends wanted to go get ice cream, and he insisted I stay at his house and have some. The ice cream was melted because his freezer was broken, and we ate it from plastic cups because he only had one bowl.",
     media: [],
   },
   {
-    title: "\"Just Friends\"",
+    title: '"Just Friends"',
     jayden:
-      "Seeing her unamused at the baseball game and alone on the couch, I took her to our front room and asked if she would help me read my school book again. As we read I swear to this day that she was staring at me and playing with her lips as we were reading. She got closer and closer until eventually she was under my arm and she started showing me childhood photos and told me her whole life story. I thought for sure she was smitten. Apparently, she saw me as \"just friends.\"",
+      'Seeing her unamused at the baseball game and alone on the couch, I took her to our front room and asked if she would help me read my school book again. As we read I swear to this day that she was staring at me and playing with her lips as we were reading. She got closer and closer until eventually she was under my arm and she started showing me childhood photos and told me her whole life story. I thought for sure she was smitten. Apparently, she saw me as "just friends."',
     taylor:
-      "Eventually, we moved to another room to read, and somehow we ended up sitting next to each other with his arm around me while I talked about myself. I was super confused because throughout the time we had known each other I thought we were just friends. So I was quite surprised that when I decided it was time to go, he walked me out and gave me a hug. After I left that night, I immediately called my mom. She laughed and said, \"I think you probably like him, Taylor.\" That was the first time I realized that I did.",
+      'Eventually, we moved to another room to read, and somehow we ended up sitting next to each other with his arm around me while I talked about myself. I was super confused because throughout the time we had known each other I thought we were just friends. So I was quite surprised that when I decided it was time to go, he walked me out and gave me a hug. After I left that night, I immediately called my mom. She laughed and said, "I think you probably like him, Taylor." That was the first time I realized that I did.',
     media: [
       { type: "photo", size: "short" },
       { type: "video", size: "short" },
@@ -84,53 +84,145 @@ const STORY_SECTIONS = [
   },
 ];
 
+const styles = {
+  page: {
+    fontFamily: "'Times New Roman', Times, serif",
+    background: "#FAF7F2",
+    color: "#1a1208",
+    minHeight: "100vh",
+  },
+  content: {
+    maxWidth: 680,
+    margin: "0 auto",
+    padding: "2rem 1.5rem 4rem",
+  },
+  pageTitle: {
+    fontSize: 42,
+    fontStyle: "italic",
+    fontWeight: 400,
+    color: "#1a1208",
+    margin: "0 0 3rem 0",
+    lineHeight: 1.2,
+    textAlign: "left",
+  },
+  sectionHeading: {
+    fontSize: 36,
+    fontStyle: "italic",
+    fontWeight: 400,
+    color: "#1a1208",
+    textAlign: "center",
+    margin: "0 0 2rem 0",
+    lineHeight: 1.2,
+  },
+  bodyGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "1.25rem 2.5rem",
+    marginBottom: "1.5rem",
+  },
+  povLabel: {
+    fontSize: 11,
+    fontWeight: 400,
+    letterSpacing: "0.13em",
+    textTransform: "uppercase",
+    color: "#888888",
+    margin: "0 0 0.35rem 0",
+  },
+  bodyText: {
+    fontSize: 15,
+    fontWeight: 400,
+    lineHeight: 1.8,
+    color: "#3a352e",
+    margin: 0,
+  },
+  mediaRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 12,
+    marginBottom: "2.75rem",
+  },
+  mediaBoxBase: {
+    flex: 1,
+    minWidth: 140,
+    borderRadius: 10,
+    background: "#ede9e1",
+    border: "1px dashed #c9a97a",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+  },
+  mediaIcon: {
+    fontSize: 22,
+    lineHeight: 1,
+    opacity: 0.5,
+    marginBottom: "0.35rem",
+  },
+  mediaLabel: {
+    fontSize: 11,
+    letterSpacing: "0.1em",
+    textTransform: "uppercase",
+    color: "#999999",
+  },
+  rule: {
+    border: 0,
+    borderTop: "1px solid #c9a97a",
+    opacity: 0.35,
+    margin: "0 0 2.75rem",
+  },
+};
+
 function MediaPlaceholder({ type, size }) {
-  const icon = type === "photo" ? "🖼️" : "▶️";
+  const icon = type === "photo" ? "🖼" : "▶";
   const label = type === "photo" ? "Photo" : "Video";
   return (
-    <div className={`our-story-media-box our-story-media-box--${size}`}>
-      <span className="our-story-media-icon" aria-hidden="true">
-        {icon}
-      </span>
-      <span className="our-story-media-label">{label}</span>
+    <div
+      style={{
+        ...styles.mediaBoxBase,
+        minHeight: size === "tall" ? 220 : 160,
+      }}
+    >
+      <span style={styles.mediaIcon} aria-hidden="true">{icon}</span>
+      <span style={styles.mediaLabel}>{label}</span>
     </div>
   );
 }
 
 export default function OurStory() {
   return (
-    <main className="our-story-page">
-      <div className="our-story-content">
-        <h1 className="our-story-title">Our Story</h1>
+    <main style={styles.page}>
+      <style>{`
+        @media (max-width: 520px) {
+          .os-body-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+      <div style={styles.content}>
+        <h1 style={styles.pageTitle}>Our Story</h1>
 
         {STORY_SECTIONS.map((section, index) => (
-          <section className="our-story-section" key={section.title}>
-            <h2 className="our-story-section-heading">{section.title}</h2>
+          <section key={section.title}>
+            <h2 style={styles.sectionHeading}>{section.title}</h2>
 
-            <div className="our-story-body-grid">
+            <div className="os-body-grid" style={styles.bodyGrid}>
               <div>
-                <p className="our-story-pov-label">JAYDEN</p>
-                <p className="our-story-body-text">{section.jayden}</p>
+                <p style={styles.povLabel}>JAYDEN</p>
+                <p style={styles.bodyText}>{section.jayden}</p>
               </div>
               <div>
-                <p className="our-story-pov-label">TAYLOR</p>
-                <p className="our-story-body-text">{section.taylor}</p>
+                <p style={styles.povLabel}>TAYLOR</p>
+                <p style={styles.bodyText}>{section.taylor}</p>
               </div>
             </div>
 
-            {section.media.length > 0 ? (
-              <div className="our-story-media-row">
-                {section.media.map((item, mediaIndex) => (
-                  <MediaPlaceholder
-                    key={`${section.title}-${item.type}-${mediaIndex}`}
-                    type={item.type}
-                    size={item.size}
-                  />
+            {section.media.length > 0 && (
+              <div style={styles.mediaRow}>
+                {section.media.map((item, i) => (
+                  <MediaPlaceholder key={i} type={item.type} size={item.size} />
                 ))}
               </div>
-            ) : null}
+            )}
 
-            {index < STORY_SECTIONS.length - 1 ? <hr className="our-story-divider" /> : null}
+            {index < STORY_SECTIONS.length - 1 && <hr style={styles.rule} />}
           </section>
         ))}
       </div>
