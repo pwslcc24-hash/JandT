@@ -6,9 +6,11 @@ import EditableMedia from "@/components/editor/EditableMedia";
 const SP = { type: "spring", damping: 26, stiffness: 280 };
 const vp = { once: true, margin: "-60px" };
 
+// sectionSlug must match mkStorySection keys in defaultSite.ts
 const STORY_SECTIONS = [
   {
     title: "A Lot Had to Happen",
+    sectionSlug: "a-lot-had-to-happen",
     jayden:
       "A lot of things came together so Taylor and I could meet. I had to run, go on a mission, transfer from D1 to a JUCO, and eventually end up at Utah State. There were a lot of unexpected turns but it all came together. I had a few opportunities to run in college, some with better offers than I got from Utah State, but Utah State just felt like the place I needed to be. Looking back, I think I ended up exactly where I was supposed to.",
     taylor:
@@ -17,6 +19,7 @@ const STORY_SECTIONS = [
   },
   {
     title: "The Quad",
+    sectionSlug: "the-quad",
     jayden:
       "On a warm late summer evening at a school kick off party at the Quad. I was with some of the few people I knew on the team. Because of complications in the transferring process, I was ineligible to compete so I had missed cross-country camp and all the team building and getting to know each other at meetings. When my friends introduced me to a group of girls as the ineligible kid. That's where I met Taylor.",
     taylor:
@@ -25,6 +28,7 @@ const STORY_SECTIONS = [
   },
   {
     title: '"TAYLOR!"',
+    sectionSlug: "taylor",
     jayden:
       'The next day, leaving biology class, I saw her across the lecture hall and yelled "TAYLOR!" I walked over and asked, "That\'s your name, right?" 😏and hit her with something like "I like gold arm band" 😉 We ended up walking back toward my car and her apartment. We were both new to campus and she was a little lost, so I confidently led us in the wrong way while we talked and laughed the whole way.',
     taylor:
@@ -33,6 +37,7 @@ const STORY_SECTIONS = [
   },
   {
     title: "Biology & Study Sessions",
+    sectionSlug: "biology-study-sessions",
     jayden:
       "After that, we started walking together after every class, chatting and laughing. While on our walks she'd tilt her head into my field of vision, stealing my attention away from the ground I was zoned out on. I would even park my car the place I did the first day so I could walk with her… until my car broke down and I got rides from her—which worked out pretty well for me. We started out walking and chatting, then we started sitting next to each other and then we studied together for hours. Wherever we were those big brown eyes would penetrate my soul with the longest maintained eye contact ever. We had the funniest study sessions and inside jokes about biology. I never did so well in a final.",
     taylor:
@@ -44,6 +49,7 @@ const STORY_SECTIONS = [
   },
   {
     title: "In-N-Out",
+    sectionSlug: "in-n-out",
     jayden:
       "I eventually hosted a karaoke and Just Dance party because I wanted her to come. Afterward, we all went to In-N-Out, where I taught her salsa dancing in the middle of the restaurant. Then we sat on a table together drinking soda water with lemons and pretending we were in Italy, making up picture book stories, making up rhymes and just talking.",
     taylor:
@@ -52,6 +58,7 @@ const STORY_SECTIONS = [
   },
   {
     title: "Melted Ice Cream",
+    sectionSlug: "melted-ice-cream",
     jayden:
       'After one of our long study sessions, Taylor invited me over for homemade enchiladas. She started helping me read a school assigned book. We would alternate switching who would read and take breaks listening to music and talking. Later, as she was driving me home, my friends called me giving me a hard time about being at the freshmen dorms then asked if I wanted to go out for ice cream. I responded, "We have ice cream at home." I convinced Taylor to come over for said ice cream. Unfortunately our freezer was broken, so we ate fluffy, melted, freezer-burned ice cream out of plastic cups and watched a baseball game where she awkwardly sat on another couch…',
     taylor:
@@ -60,6 +67,7 @@ const STORY_SECTIONS = [
   },
   {
     title: '"Just Friends"',
+    sectionSlug: "just-friends",
     jayden:
       'Seeing her unamused at the baseball game and alone on the couch, I took her to our front room and asked if she would help me read my school book again. As we read I swear to this day that she was staring at me and playing with her lips as we were reading. She got closer and closer until eventually she was under my arm and she started showing me childhood photos and told me her whole life story. I thought for sure she was smitten. Apparently, she saw me as "just friends."',
     taylor:
@@ -72,6 +80,7 @@ const STORY_SECTIONS = [
   },
   {
     title: "The First Date",
+    sectionSlug: "the-first-date",
     jayden:
       "But just being friends wouldn't last long for her… While I was away in Wisconsin for a race, I asked her on our first date. I picked her up, and the conversation immediately just flowed. There was not an ounce of awkwardness. We got lost trying to find a pumpkin patch I had never been to but thought I could find with no directions. Luckily we eventually stumbled upon one on the side of the road. We carved pumpkins, listened to music, and I made her a spectacular 3-course dinner. Watched a movie and then we kissed...",
     taylor:
@@ -84,6 +93,7 @@ const STORY_SECTIONS = [
   },
   {
     title: "Since Then",
+    sectionSlug: "since-then",
     jayden:
       "I have fallen in love with her, so in love that I couldn't wait to get married, and I'm so excited. Taylor loves food almost as much as me; she's much, much smarter than me (although I did better in the biology final) she is extremely patient with my ludicrousness, I love talking with her because she goes with my scattered unorganized conversations and we can ramble for hours, she has the most beautiful singing voice, I love her love of God and her relationship with him. I can't wait to start a family with her. I'm so excited to make every day special, supporting each other in our goals, and having an indefinite running partner. All of these things make me so excited to marry her but are not why I love her. I love Taylor simply because I do, it is indescribable!",
     taylor:
@@ -191,10 +201,8 @@ function StoryMedia({ sectionSlug, index, type, size }) {
       blockKey={`media-${index}`}
       fallbackType={type === "photo" ? "image" : "video"}
       variant="inline"
-      className="w-full"
       mediaClassName="w-full h-full object-cover"
     >
-      {/* shown when no media uploaded yet */}
       <div style={{ ...styles.mediaBoxBase, minHeight }}>
         <span style={styles.mediaIcon} aria-hidden="true">{icon}</span>
         <span style={styles.mediaLabel}>{label}</span>
@@ -261,7 +269,7 @@ export default function OurStory() {
                     transition={{ ...SP, delay: 0.1 + i * 0.08 }}
                   >
                     <StoryMedia
-                      sectionSlug={section.title.replace(/[^a-z0-9]/gi, "-").toLowerCase()}
+                      sectionSlug={section.sectionSlug}
                       index={i}
                       type={item.type}
                       size={item.size}

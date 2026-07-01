@@ -246,8 +246,23 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       patch: Record<string, unknown>
     ) => {
       commitSite((draft) => {
-        const block = findBlock(draft, pageSlug, sectionKey, blockKey);
-        if (block) block.value = { ...block.value, ...patch };
+        let block = findBlock(draft, pageSlug, sectionKey, blockKey);
+        if (!block) {
+          // Auto-create the page/section/block if missing (e.g. story media slots)
+          let page = draft.pages.find((p) => p.slug === pageSlug);
+          if (!page) {
+            page = { id: `page-${pageSlug}`, slug: pageSlug, title: pageSlug, sortOrder: 99, sections: [] };
+            draft.pages.push(page);
+          }
+          let section = page.sections.find((s) => s.sectionKey === sectionKey);
+          if (!section) {
+            section = { id: `sec-${pageSlug}-${sectionKey}`, sectionKey, sectionType: "story-media", sortOrder: 0, styles: {}, stylesTablet: {}, stylesMobile: {}, blocks: [] };
+            page.sections.push(section);
+          }
+          block = { id: `blk-${blockKey}`, blockKey, blockType: "image", value: {}, styles: {}, stylesTablet: {}, stylesMobile: {}, sortOrder: 0 };
+          section.blocks.push(block);
+        }
+        block.value = { ...block.value, ...patch };
       });
     },
     [commitSite]

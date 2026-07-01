@@ -147,17 +147,19 @@ function pageContent(
   ];
 
   if (slug === "story") {
-    sections.push({
-      id: "sec-story-media",
-      sectionKey: "media",
-      sectionType: "media-stack",
-      sortOrder: 1,
-      styles: {},
-      stylesTablet: {},
-      stylesMobile: {},
-      // Keep story media empty by default so publish-sync clears any live story photo/video.
-      blocks: [block("media-stack", "json", { items: [] })],
-    });
+    // One section per story chapter, each with its media slots as image blocks
+    const storyMediaSections: typeof sections = [
+      mkStorySection("a-lot-had-to-happen", []),
+      mkStorySection("the-quad", ["video"]),
+      mkStorySection("taylor", []),
+      mkStorySection("biology-study-sessions", ["video", "video"]),
+      mkStorySection("in-n-out", ["video"]),
+      mkStorySection("melted-ice-cream", []),
+      mkStorySection("just-friends", ["photo", "video", "photo"]),
+      mkStorySection("the-first-date", ["photo", "video", "photo"]),
+      mkStorySection("since-then", ["photo"]),
+    ];
+    sections.push(...storyMediaSections);
   }
 
   return {
@@ -183,6 +185,21 @@ function block(
     stylesTablet: {},
     stylesMobile: {},
     sortOrder: 0,
+  };
+}
+
+function mkStorySection(sectionSlug: string, mediaTypes: ("photo" | "video")[]) {
+  return {
+    id: `sec-story-${sectionSlug}`,
+    sectionKey: sectionSlug,
+    sectionType: "story-media",
+    sortOrder: 0,
+    styles: {},
+    stylesTablet: {},
+    stylesMobile: {},
+    blocks: mediaTypes.map((type, i) =>
+      block(`media-${i}`, "image", { url: "", mediaType: type === "photo" ? "image" : "video", alt: "" })
+    ),
   };
 }
 
