@@ -33,3 +33,4 @@ dist-ssr
 # Automation scripts (Cursor CLI + publish-sync)
 automation/node_modules
 automation/.env
+base44/.app.jsonc
