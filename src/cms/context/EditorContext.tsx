@@ -161,21 +161,61 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
-    Promise.all([getSessionUser(), loadSiteDocument()]).then(async ([u, doc]) => {
-      let initial = cloneSiteDocument(doc);
-      if (u?.role === "admin") {
-        const draftDoc = await loadSiteDocument({ preferDraft: true });
-        const publishedTs = Date.parse(doc.updatedAt || "0");
-        const draftTs = Date.parse(draftDoc.updatedAt || "0");
-        if (draftTs > publishedTs) {
-          initial = cloneSiteDocument(draftDoc);
+    let cancelled = false;
+    const LOAD_TIMEOUT_MS = 12_000;
+
+    const withTimeout = <T,>(promise: Promise<T>, label: string): Promise<T> =>
+      Promise.race([
+        promise,
+        new Promise<T>((_, reject) => {
+          setTimeout(() => reject(new Error(`${label} timed out`)), LOAD_TIMEOUT_MS);
+        }),
+      ]);
+
+    (async () => {
+      try {
+        const [u, doc] = await Promise.all([
+          withTimeout(getSessionUser(), "session"),
+          withTimeout(loadSiteDocument(), "site content"),
+        ]);
+        if (cancelled) return;
+
+        let initial = cloneSiteDocument(doc);
+        if (u?.role === "admin") {
+          try {
+            const draftDoc = await withTimeout(
+              loadSiteDocument({ preferDraft: true }),
+              "draft content"
+            );
+            const publishedTs = Date.parse(doc.updatedAt || "0");
+            const draftTs = Date.parse(draftDoc.updatedAt || "0");
+            if (draftTs > publishedTs) {
+              initial = cloneSiteDocument(draftDoc);
+            }
+          } catch (err) {
+            console.warn("[CMS] Draft load failed, using published:", err);
+          }
         }
+        if (cancelled) return;
+        setUser(u);
+        setSite(initial);
+        historyRef.current = [initial];
+      } catch (err) {
+        console.warn("[CMS] Initial load failed, using defaults:", err);
+        if (cancelled) return;
+        const { createDefaultSiteDocument } = await import("../seed/defaultSite");
+        const defaults = cloneSiteDocument(createDefaultSiteDocument());
+        setUser(null);
+        setSite(defaults);
+        historyRef.current = [defaults];
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
-      setUser(u);
-      setSite(initial);
-      historyRef.current = [initial];
-      setIsLoading(false);
-    });
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const pushHistory = useCallback((doc: SiteDocument) => {
