@@ -10,9 +10,9 @@
 
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
-export const OG_TITLE = "You're invited";
+export const OG_TITLE = "Jayden & Taylor's Wedding";
 export const OG_DESCRIPTION =
-  "Everything you need to know — our story, photos, and registry.";
+  "Wedding info, our story, photos, and Venmo / registry.";
 
 /** Default background photo used for the share card. */
 export const DEFAULT_OG_BACKGROUND =
