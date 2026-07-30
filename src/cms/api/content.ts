@@ -1,13 +1,17 @@
 import { getSupabase, isSupabaseConfigured, STORAGE_BUCKET } from "../supabase/client";
 import type { SiteDocument, MediaAsset } from "../types";
 import { createDefaultSiteDocument } from "../seed/defaultSite";
-import { loadPublishedSiteDocument } from "./publish";
+import {
+  loadPublishedSiteDocument,
+  loadDraftSiteDocument,
+  saveDraftToBase44,
+  isBase44PublishAvailable,
+} from "./publish";
 import {
   documentHasInlineMedia,
   externalizeInlineMedia,
   uploadBlobToBase44,
 } from "./base44Media";
-import { isBase44PublishAvailable } from "./publish";
 import { cloneSiteDocument, touchSiteDocument } from "../utils/immutable";
 import imageCompression from "browser-image-compression";
 
@@ -31,8 +35,9 @@ export async function loadSiteDocument(options: LoadSiteOptions = {}): Promise<S
   const publishedCached = isBase44PublishAvailable() ? null : readLocalPublished();
   const remotePublished = published ?? publishedCached;
 
-  if (options.preferDraft && draft) {
-    return cloneSiteDocument(mergeSiteDocument(draft, defaults));
+  if (options.preferDraft) {
+    const newest = await resolveDraft(draft);
+    if (newest) return cloneSiteDocument(mergeSiteDocument(newest, defaults));
   }
 
   if (remotePublished) {
@@ -101,6 +106,26 @@ function readJsonKey(key: string): SiteDocument | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Returns the freshest draft available: the newer of the localStorage draft and
+ * the Base44-saved draft. The server draft is what makes uploads survive a
+ * refresh even if localStorage has been cleared.
+ */
+async function resolveDraft(
+  localDraft: SiteDocument | null
+): Promise<SiteDocument | null> {
+  if (!isBase44PublishAvailable()) return localDraft;
+
+  const serverDraft = await loadDraftSiteDocument();
+  if (!localDraft && !serverDraft) return null;
+  if (!localDraft) return serverDraft;
+  if (!serverDraft) return localDraft;
+
+  const localTs = Date.parse(localDraft.updatedAt || "0");
+  const serverTs = Date.parse(serverDraft.updatedAt || "0");
+  return serverTs > localTs ? serverDraft : localDraft;
 }
 
 async function loadFromSupabase(): Promise<SiteDocument | null> {
@@ -205,24 +230,41 @@ export function mergeSiteDocument(stored: SiteDocument, defaults: SiteDocument):
     if (!pageSlugs.has(page.slug)) mergedPages.push(cloneSiteDocument(page));
   }
 
-  return { ...base, pages: mergedPages };
+  // Fill missing settings keys (e.g. og/wedding fields) from defaults without
+  // discarding any values the user has already set.
+  const mergedSettings = { ...defaults.settings, ...base.settings };
+
+  return { ...base, settings: mergedSettings, pages: mergedPages };
 }
 
 export async function saveLocalDraft(doc: SiteDocument): Promise<void> {
   let snapshot = touchSiteDocument(doc);
+  let tooLarge = false;
   try {
     localStorage.setItem(LOCAL_DRAFT_KEY, JSON.stringify(snapshot));
-    return;
   } catch {
     if (!isBase44PublishAvailable() || !documentHasInlineMedia(snapshot)) {
       throw new Error(
         "Draft is too large to save locally. Use smaller images/videos or click Save Live."
       );
     }
+    tooLarge = true;
   }
 
-  snapshot = touchSiteDocument(await externalizeInlineMedia(snapshot));
-  localStorage.setItem(LOCAL_DRAFT_KEY, JSON.stringify(snapshot));
+  if (tooLarge) {
+    snapshot = touchSiteDocument(await externalizeInlineMedia(snapshot));
+    try {
+      localStorage.setItem(LOCAL_DRAFT_KEY, JSON.stringify(snapshot));
+    } catch {
+      /* localStorage full — the server draft below still persists the work */
+    }
+  }
+
+  // Persist to Base44 so the draft survives a refresh even if localStorage is
+  // cleared/unavailable. Best-effort; never blocks the editor.
+  if (isBase44PublishAvailable()) {
+    void saveDraftToBase44(snapshot).catch(() => {});
+  }
 }
 
 export async function publishSiteDocument(doc: SiteDocument): Promise<SiteDocument> {

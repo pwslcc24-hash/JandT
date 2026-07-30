@@ -10,6 +10,10 @@
       "type": "object",
       "description": "Full CMS site document JSON"
     },
+    "draft": {
+      "type": "object",
+      "description": "Latest autosaved draft (unsaved editor work) \u2014 survives refresh even if localStorage is cleared"
+    },
     "updatedAt": {
       "type": "string",
       "description": "ISO timestamp of last publish"
