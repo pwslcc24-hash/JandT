@@ -71,6 +71,7 @@ interface EditorContextValue {
     blockKey: string,
     styles: Partial<ElementStyles>
   ) => void;
+  updateSettings: (patch: Record<string, unknown>) => void;
   reorderSections: (pageSlug: string, sectionIds: string[]) => void;
   undo: () => void;
   redo: () => void;
@@ -117,6 +118,7 @@ const READONLY_EDITOR: EditorContextValue = {
   updateBlockText: noop,
   updateBlockValue: noop,
   updateBlockStyles: noop,
+  updateSettings: noop,
   reorderSections: noop,
   undo: noop,
   redo: noop,
@@ -325,6 +327,15 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [commitSite, deviceMode]
   );
 
+  const updateSettings = useCallback(
+    (patch: Record<string, unknown>) => {
+      commitSite((draft) => {
+        draft.settings = { ...draft.settings, ...patch };
+      });
+    },
+    [commitSite]
+  );
+
   const reorderSections = useCallback(
     (pageSlug: string, sectionIds: string[]) => {
       commitSite((draft) => {
@@ -443,6 +454,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       updateBlockText,
       updateBlockValue,
       updateBlockStyles,
+      updateSettings,
       reorderSections,
       undo,
       redo,
@@ -471,6 +483,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       updateBlockText,
       updateBlockValue,
       updateBlockStyles,
+      updateSettings,
       reorderSections,
       undo,
       redo,

@@ -13,6 +13,7 @@ import AdminMedia from "@/pages/admin/AdminMedia";
 import AdminContent from "@/pages/admin/AdminContent";
 import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminSettings from "@/pages/admin/AdminSettings";
+import AdminSocialPreview from "@/pages/admin/AdminSocialPreview";
 import AdminAnalytics from "@/pages/admin/AdminAnalytics";
 import ScrollToTop from "@/components/ScrollToTop";
 
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="content" element={<AdminContent />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="settings" element={<AdminSettings />} />
+        <Route path="social" element={<AdminSocialPreview />} />
         <Route path="analytics" element={<AdminAnalytics />} />
       </Route>
       <Route element={<PublicLayout />}>

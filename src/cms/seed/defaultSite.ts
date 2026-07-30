@@ -16,6 +16,11 @@ export function createDefaultSiteDocument(): SiteDocument {
       weddingDate: "2026-08-05T00:00:00",
       weddingDateDisplay: "August 5, 2026",
       videoUrl: "",
+      ogTitle: "You're invited",
+      ogDescription: "Everything you need to know — our story, photos, and registry.",
+      ogBackgroundImageUrl:
+        "https://media.base44.com/images/public/6a2b01575fdcdc3d21540f60/696eb7535_Screenshot2026-07-15at90111PM.png",
+      ogImageUrl: "",
     },
     pages: [
       {

@@ -7,6 +7,7 @@ const links = [
   { to: "/admin/media", label: "Media Library" },
   { to: "/admin/content", label: "Content Manager" },
   { to: "/admin/users", label: "Users" },
+  { to: "/admin/social", label: "Social Preview" },
   { to: "/admin/settings", label: "Site Settings" },
   { to: "/admin/analytics", label: "Analytics" },
 ];
