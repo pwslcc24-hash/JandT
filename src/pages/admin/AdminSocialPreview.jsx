@@ -71,8 +71,8 @@ export default function AdminSocialPreview() {
       <h1>Social Link Preview</h1>
       <p className="admin-muted">
         Generates a flattened 1200×630 <code>og:image</code> for social shares —
-        full-bleed photo, bottom gradient, and the “You’re invited” title baked
-        in as a single PNG.
+        a full-bleed photo as a single PNG. The “You’re invited” wording lives
+        in the <code>og:title</code> meta tag.
       </p>
 
       <div className="admin-cards">

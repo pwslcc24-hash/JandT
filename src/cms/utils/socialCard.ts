@@ -3,8 +3,9 @@
  *
  * The og:image has to be a single flattened raster file (1200x630) because
  * social crawlers do not run JavaScript. We composite it in a canvas at runtime
- * (full-bleed background photo + bottom gradient + Times italic title), then
- * upload the resulting PNG to Base44 storage so it can be used as og:image.
+ * (full-bleed background photo), then upload the resulting PNG to Base44
+ * storage so it can be used as og:image. The "You're invited" wording lives
+ * in the og:title meta tag instead of being baked into the image.
  */
 
 export const OG_WIDTH = 1200;
@@ -32,8 +33,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
  * flattened image as a PNG Blob ready to upload.
  */
 export async function renderOgImageToBlob(
-  backgroundUrl: string,
-  title: string = OG_TITLE
+  backgroundUrl: string
 ): Promise<Blob> {
   const img = await loadImage(backgroundUrl);
 
@@ -55,13 +55,6 @@ export async function renderOgImageToBlob(
   grad.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, OG_WIDTH, OG_HEIGHT);
-
-  // 3. Title near the bottom, centered, white Times italic.
-  ctx.textAlign = "center";
-  ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = "#ffffff";
-  ctx.font = 'italic 400 44px "Times New Roman", Times, serif';
-  ctx.fillText(title, OG_WIDTH / 2, OG_HEIGHT - 70);
 
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(

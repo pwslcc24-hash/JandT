@@ -1,14 +1,10 @@
-import {
-  OG_WIDTH,
-  OG_HEIGHT,
-  OG_TITLE,
-  OG_DESCRIPTION,
-} from "@/cms/utils/socialCard";
+import { OG_WIDTH, OG_HEIGHT, OG_DESCRIPTION } from "@/cms/utils/socialCard";
 
 /**
  * Visual preview of the social share card. Renders the flattened 1200x630
- * og:image design (background photo + bottom gradient + "You're invited"
- * title) above an optional subtitle card on a light background.
+ * og:image design (background photo) above an optional subtitle card on a
+ * light background. The "You're invited" wording lives in the og:title meta
+ * tag, not on the image.
  *
  * This is the on-page preview only — the actual og:image PNG is produced by
  * renderOgImageToBlob() in src/cms/utils/socialCard.ts.
@@ -41,32 +37,6 @@ export default function SocialShareCard({
           backgroundColor: "#1a1a1a",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 55%)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: "9%",
-            textAlign: "center",
-            fontFamily: "'Times New Roman', Times, serif",
-            fontStyle: "italic",
-            fontWeight: 400,
-            fontSize: "clamp(22px, 6vw, 44px)",
-            lineHeight: 1.1,
-            color: "#fff",
-            padding: "0 16px",
-          }}
-        >
-          {OG_TITLE}
-        </div>
       </div>
 
       {/* Subtitle card (lives below the image, outside the og:image) */}
