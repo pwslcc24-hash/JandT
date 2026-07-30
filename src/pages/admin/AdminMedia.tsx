@@ -9,7 +9,7 @@ export default function AdminMedia() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (site?.clientId) listMedia(site.clientId).then(setAssets);
+    if (site?.clientId) listMedia(site.clientId).then(setAssets).catch(() => setAssets([]));
   }, [site?.clientId]);
 
   const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
